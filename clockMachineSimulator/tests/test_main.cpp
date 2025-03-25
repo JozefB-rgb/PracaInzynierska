@@ -40,6 +40,23 @@ TEST_F(clockMachineSimulatorTest, checkCurrentTime)
 	EXPECT_EQ(obj->getSec(), now_tm.tm_sec);
 }
 
+TEST_F(clockMachineSimulatorTest, checkMicroseconds)
+{
+	//creates time point to current time
+	auto now = std::chrono::system_clock::now();
+
+	//converts time point to us and how many passed since 1970-01-01
+	auto now_us_timePoint = std::chrono::time_point_cast<std::chrono::microseconds>(now);
+
+	//converts time point to "classic" variable (like int) and how many passed only from last second
+	auto now_us = now_us_timePoint.time_since_epoch().count() % 1000000;
+
+	//because program execution takes some time this value should be set experientally, recommend values no greater than 1000us
+	const long long US_TOLERANCE = 10;
+	EXPECT_GE(obj->getuSec(), now_us - US_TOLERANCE);
+	EXPECT_LE(obj->getuSec(), now_us + US_TOLERANCE);
+}
+
 int main(int argc, char** argv)
 {
 	::testing::InitGoogleTest(&argc, argv);

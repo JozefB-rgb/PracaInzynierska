@@ -14,6 +14,8 @@ class clockMachineSimulator
 	int min;
 	int sec;
 
+	long long uSec;
+
 	void updateTimeValues();
 
 public:
@@ -24,6 +26,8 @@ public:
 	int getHour();
 	int getMin();
 	int getSec();
+	
+	int getuSec();
 };
 
 #endif //CLOCK_MACHINE_SIMULATOR_H

@@ -21,6 +21,12 @@ void clockMachineSimulator::updateTimeValues()
 	hour = now_tm.tm_hour;
 	min = now_tm.tm_min;
 	sec = now_tm.tm_sec;
+
+	//converts time point to us and how many passed since 1970-01-01
+	auto now_us_timePoint = std::chrono::time_point_cast<std::chrono::microseconds>(now);
+
+	//converts time point to "classic" variable (here long long) and how many passed only from last second
+	uSec = now_us_timePoint.time_since_epoch().count() % 1000000;
 }
 
 std::string clockMachineSimulator::getTime()
@@ -62,5 +68,11 @@ int clockMachineSimulator::getSec()
 {
 	updateTimeValues();
 	return sec;
+}
+
+int clockMachineSimulator::getuSec()
+{
+	updateTimeValues();
+	return uSec;
 }
 
