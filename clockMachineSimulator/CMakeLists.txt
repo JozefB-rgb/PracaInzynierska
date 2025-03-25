@@ -2,7 +2,7 @@ add_executable(clockMachineSimulator src/main.cpp src/clockMachineSimulator.h sr
 
 # Find GoogleTest (installed via vcpkg)
 find_package(GTest QUIET)
-#if not found specified path manually
+#if not found specify path manually
 if(NOT GTest_FOUND)
 	#do it here
 	set(GTEST_ROOT "C:/vcpkg/vcpkg/scripts/buildsystems/vcpkg.cmake")
