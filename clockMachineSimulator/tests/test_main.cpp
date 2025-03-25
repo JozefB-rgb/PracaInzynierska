@@ -16,6 +16,11 @@ protected:
 	}
 };
 
+TEST_F(clockMachineSimulatorTest, checkConstructor)
+{
+	EXPECT_EQ(obj->getNoUpdatedTime(), "1970-01-01 00:00:00.000000");
+}
+
 TEST_F(clockMachineSimulatorTest, checkProgramResponse)
 {
 	EXPECT_NE(obj->getTime(), "2000-01-01 12:00:00.000000");
@@ -56,6 +61,25 @@ TEST_F(clockMachineSimulatorTest, checkMicroseconds)
 	EXPECT_GE(obj->getuSec(), now_us - US_TOLERANCE);
 	EXPECT_LE(obj->getuSec(), now_us + US_TOLERANCE);
 }
+
+/*
+TEST_F(clockMachineSimulatorTest, testOffsetYear)
+{
+	//creates time point to current time
+	auto now = std::chrono::system_clock::now();
+
+	//converts time point to seconds passed since 1970-01-01
+	std::time_t now_time_t = std::chrono::system_clock::to_time_t(now);
+
+	//converts passed seconds to "year,month,day hour, min, sec" format
+	std::tm now_tm = *std::localtime(&now_time_t);
+
+	auto offsetYear = 1;
+
+	obj->addOffset(offsetYear, 0, 0, 0, 0, 0);
+
+	EXPECT_EQ(obj->getYear(), now_tm.tm_year + offsetYear);
+}*/
 
 int main(int argc, char** argv)
 {

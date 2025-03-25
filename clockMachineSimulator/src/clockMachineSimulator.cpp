@@ -1,8 +1,30 @@
 #include <string>
 #include <chrono>
+#include <sstream>
+#include <iomanip>
 
 #include "clockMachineSimulator.h"
 
+clockMachineSimulator::clockMachineSimulator() : year(1970), month(1), day(1), hour(0), min(0), sec(0), uSec(0), offsetYear(0)
+{
+	;
+}
+
+std::string clockMachineSimulator::getNoUpdatedTime()
+{
+	std::ostringstream oss;
+
+	oss << std::setw(4) << std::setfill('0') << year << "-" \
+		<< std::setw(2) << std::setfill('0') << month << "-" \
+		<< std::setw(2) << std::setfill('0') << day << " "
+		<< std::setw(2) << std::setfill('0') << hour << ":"
+		<< std::setw(2) << std::setfill('0') << min << ":"
+		<< std::setw(2) << std::setfill('0') << sec << "."
+		<< std::setw(6) << std::setfill('0') << uSec;
+
+	std::string result = oss.str();
+	return result;
+}
 
 void clockMachineSimulator::updateTimeValues()
 {

@@ -4,9 +4,6 @@
 
 class clockMachineSimulator
 {
-	//us per s
-	int timeOffsetPerSecond;
-
 	int year;
 	int month;
 	int day;
@@ -16,9 +13,16 @@ class clockMachineSimulator
 
 	long long uSec;
 
+	int offsetYear;
+
 	void updateTimeValues();
 
 public:
+	clockMachineSimulator();
+
+	//function for testing constructor
+	std::string getNoUpdatedTime();
+
 	std::string getTime();
 	int getYear();
 	int getMonth();
