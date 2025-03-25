@@ -2,6 +2,7 @@
 #include <chrono>
 #include <sstream>
 #include <iomanip>
+#include <iostream>
 
 #include "clockMachineSimulator.h"
 
@@ -12,18 +13,7 @@ clockMachineSimulator::clockMachineSimulator() : year(1970), month(1), day(1), h
 
 std::string clockMachineSimulator::getNoUpdatedTime()
 {
-	std::ostringstream oss;
-
-	oss << std::setw(4) << std::setfill('0') << year << "-" \
-		<< std::setw(2) << std::setfill('0') << month << "-" \
-		<< std::setw(2) << std::setfill('0') << day << " "
-		<< std::setw(2) << std::setfill('0') << hour << ":"
-		<< std::setw(2) << std::setfill('0') << min << ":"
-		<< std::setw(2) << std::setfill('0') << sec << "."
-		<< std::setw(6) << std::setfill('0') << uSec;
-
-	std::string result = oss.str();
-	return result;
+	return timeToString();
 }
 
 void clockMachineSimulator::updateTimeValues()
@@ -51,9 +41,26 @@ void clockMachineSimulator::updateTimeValues()
 	uSec = now_us_timePoint.time_since_epoch().count() % 1000000;
 }
 
+std::string clockMachineSimulator::timeToString()
+{
+	std::ostringstream oss;
+
+	oss << std::setw(4) << std::setfill('0') << year << "-" \
+		<< std::setw(2) << std::setfill('0') << month << "-" \
+		<< std::setw(2) << std::setfill('0') << day << " "
+		<< std::setw(2) << std::setfill('0') << hour << ":"
+		<< std::setw(2) << std::setfill('0') << min << ":"
+		<< std::setw(2) << std::setfill('0') << sec << "."
+		<< std::setw(6) << std::setfill('0') << uSec;
+
+	std::string result = oss.str();
+	return result;
+}
+
 std::string clockMachineSimulator::getTime()
 {
-	return "2000-01-01 12:00:00.000000";
+	updateTimeValues();
+	return timeToString();
 }
 
 int clockMachineSimulator::getYear()

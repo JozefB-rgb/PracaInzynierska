@@ -16,6 +16,7 @@ class clockMachineSimulator
 	int offsetYear;
 
 	void updateTimeValues();
+	std::string timeToString();
 
 public:
 	clockMachineSimulator();

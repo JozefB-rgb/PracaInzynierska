@@ -23,7 +23,7 @@ TEST_F(clockMachineSimulatorTest, checkConstructor)
 
 TEST_F(clockMachineSimulatorTest, checkProgramResponse)
 {
-	EXPECT_NE(obj->getTime(), "2000-01-01 12:00:00.000000");
+	EXPECT_EQ(obj->getTime(), "2000-01-01 12:00:00.000000");
 }
 
 TEST_F(clockMachineSimulatorTest, checkCurrentTime)
