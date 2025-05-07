@@ -18,7 +18,7 @@ protected:
 
 TEST_F(clockMachineSimulatorTest, checkConstructor)
 {
-	EXPECT_EQ(obj->getNoUpdatedTime(), "1970-01-01 00:00:00.000000");
+	EXPECT_EQ(obj->getNoUpdatedTime(), "1900-01-01 00:00:00.000000");
 }
 
 TEST_F(clockMachineSimulatorTest, checkProgramResponse)
@@ -31,14 +31,14 @@ TEST_F(clockMachineSimulatorTest, checkCurrentTime)
 	//creates time point to current time
 	auto now = std::chrono::system_clock::now();
 
-	//converts time point to seconds passed since 1970-01-01
+	//converts time point to seconds passed since 1900-01-01
 	std::time_t now_time_t = std::chrono::system_clock::to_time_t(now);
 
 	//converts passed seconds to "year,month,day hour, min, sec" format
 	std::tm now_tm = *std::localtime(&now_time_t);
 
-	EXPECT_EQ(obj->getYear(), now_tm.tm_year);
-	EXPECT_EQ(obj->getMonth(), now_tm.tm_mon);
+	EXPECT_EQ(obj->getYear(), now_tm.tm_year + 1900);
+	EXPECT_EQ(obj->getMonth(), now_tm.tm_mon + 1);
 	EXPECT_EQ(obj->getDay(), now_tm.tm_mday);
 	EXPECT_EQ(obj->getHour(), now_tm.tm_hour);
 	EXPECT_EQ(obj->getMin(), now_tm.tm_min);

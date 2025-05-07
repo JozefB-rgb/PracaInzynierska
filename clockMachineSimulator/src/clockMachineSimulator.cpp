@@ -6,7 +6,7 @@
 
 #include "clockMachineSimulator.h"
 
-clockMachineSimulator::clockMachineSimulator() : year(1970), month(1), day(1), hour(0), min(0), sec(0), uSec(0), offsetYear(0)
+clockMachineSimulator::clockMachineSimulator() : year(1900), month(1), day(1), hour(0), min(0), sec(0), uSec(0), offsetYear(0)
 {
 	;
 }
@@ -21,20 +21,21 @@ void clockMachineSimulator::updateTimeValues()
 	//creates time point to current time
 	auto now = std::chrono::system_clock::now();
 
-	//converts time point to seconds passed since 1970-01-01
+	//converts time point to seconds passed since 1900-01-01
 	time_t now_time_t = std::chrono::system_clock::to_time_t(now);
 
 	//converts passed seconds to "year,month,day hour, min, sec" format
 	std::tm now_tm = *std::localtime(&now_time_t);
 
-	year = now_tm.tm_year;
-	month = now_tm.tm_mon;
-	day = now_tm.tm_mday;
+	//convert values to actual data and time (year form values since 1900 and month form 0-11 to 1-12)
+	year = now_tm.tm_year + 1900 ;
+	month = now_tm.tm_mon + 1;
+	day = now_tm.tm_mday ;
 	hour = now_tm.tm_hour;
 	min = now_tm.tm_min;
 	sec = now_tm.tm_sec;
 
-	//converts time point to us and how many passed since 1970-01-01
+	//converts time point to us and how many passed since 1900-01-01
 	auto now_us_timePoint = std::chrono::time_point_cast<std::chrono::microseconds>(now);
 
 	//converts time point to "classic" variable (here long long) and how many passed only from last second
