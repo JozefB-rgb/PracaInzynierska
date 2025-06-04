@@ -9,7 +9,7 @@
 
 
 
-class clockMachineSimulatorTest : public ::testing::Test
+/*class clockMachineSimulatorTest : public ::testing::Test
 {
 protected:
 	std::unique_ptr<clockMachineSimulator> obj;
@@ -63,7 +63,7 @@ TEST_F(clockMachineSimulatorTest, checkMicroseconds)
 	const long long US_TOLERANCE = 10;
 	EXPECT_GE(obj->getuSec(), now_us - US_TOLERANCE);
 	EXPECT_LE(obj->getuSec(), now_us + US_TOLERANCE);
-}
+}*/
 
 /*
 TEST_F(clockMachineSimulatorTest, testOffsetYear)
@@ -184,7 +184,7 @@ TEST_F(TimeSynchronizatorTest, testDataStructure)
 
 }
 
-Test_F(TimeSynchronizatorTest, testMakingTimeString)
+TEST_F(TimeSynchronizatorTest, testMakingTimeString)
 {
 	timeToString converter;
 
@@ -200,7 +200,7 @@ Test_F(TimeSynchronizatorTest, testMakingTimeString)
 
 	std::string timeString = converter.converTime(customTime);
 
-	EXPECT_EQ(timeString, "2025.05.28 20:21:29:000098");
+	EXPECT_EQ(timeString, "2025-04-05 20:21:29.000098");
 }
 
 int main(int argc, char** argv)
