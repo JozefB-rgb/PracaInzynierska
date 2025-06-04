@@ -116,9 +116,15 @@ class TimeSynchronizator
 
 public:
 	TimeSynchronizator(IClock& timeSource) : timeSource_(timeSource) {}
-	void updateTime() { ; };
+	void updateTime() { timeSource_.getTime(time_); };
 
-	int getYear() {return 0;};
+	int getYear() {return time_.year;};
+	int getMonth() { return time_.month; };
+	int getDay() { return time_.day; };
+	int getHour() { return time_.hour; };
+	int getMin() { return time_.min; };
+	int getSec() { return time_.sec; };
+	int getuSec() { return time_.uSec; };
 };
 
 class TimeSynchronizatorTest :public ::testing::Test
@@ -128,13 +134,31 @@ class TimeSynchronizatorTest :public ::testing::Test
 TEST_F(TimeSynchronizatorTest, testDataStructure)
 {
 	MockClock clock;
-	TimeStructure customTime = { 2025, 5, 28, 18, 19, 20, 100200 };
-
+	TimeStructure customTime = {
+		.year = 2025,
+		.month = 5,
+		.day = 28,
+		.hour = 18,
+		.min = 19,
+		.sec = 20,
+		.uSec = 100200
+	};
 	TimeSynchronizator obj(clock);
+
+	EXPECT_CALL(clock, getTime(testing::_))
+		.WillOnce(testing::Invoke([&customTime](TimeStructure& time) {
+		time = customTime;
+			}));
 
 	obj.updateTime();
 
 	EXPECT_EQ(obj.getYear(), 2025);
+	EXPECT_EQ(obj.getMonth(), 5);
+	EXPECT_EQ(obj.getDay(), 28);
+	EXPECT_EQ(obj.getHour(), 18);
+	EXPECT_EQ(obj.getMin(), 19);
+	EXPECT_EQ(obj.getSec(), 20);
+	EXPECT_EQ(obj.getuSec(), 100200);
 
 }
 
