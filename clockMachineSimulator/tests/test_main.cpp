@@ -3,6 +3,7 @@
 #include <memory>
 #include <chrono>
 #include <iostream>
+#include <string>
 
 #include "clockMachineSimulator.h"
 
@@ -131,6 +132,27 @@ class TimeSynchronizatorTest :public ::testing::Test
 {
 };
 
+class timeToString
+{
+public:
+	timeToString() { ; }
+	std::string converTime(TimeStructure& time)
+	{
+		std::ostringstream oss;
+
+		oss << std::setw(4) << std::setfill('0') << time.year << "-" \
+			<< std::setw(2) << std::setfill('0') << time.month << "-" \
+			<< std::setw(2) << std::setfill('0') << time.day << " "
+			<< std::setw(2) << std::setfill('0') << time.hour << ":"
+			<< std::setw(2) << std::setfill('0') << time.min << ":"
+			<< std::setw(2) << std::setfill('0') << time.sec << "."
+			<< std::setw(6) << std::setfill('0') << time.uSec;
+
+		std::string result = oss.str();
+		return result;
+	}
+};
+
 TEST_F(TimeSynchronizatorTest, testDataStructure)
 {
 	MockClock clock;
@@ -160,6 +182,25 @@ TEST_F(TimeSynchronizatorTest, testDataStructure)
 	EXPECT_EQ(obj.getSec(), 20);
 	EXPECT_EQ(obj.getuSec(), 100200);
 
+}
+
+Test_F(TimeSynchronizatorTest, testMakingTimeString)
+{
+	timeToString converter;
+
+	TimeStructure customTime = {
+	.year = 2025,
+	.month = 4,
+	.day = 5,
+	.hour = 20,
+	.min = 21,
+	.sec = 29,
+	.uSec = 98
+	};
+
+	std::string timeString = converter.converTime(customTime);
+
+	EXPECT_EQ(timeString, "2025.05.28 20:21:29:000098");
 }
 
 int main(int argc, char** argv)
