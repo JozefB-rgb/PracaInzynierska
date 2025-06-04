@@ -110,32 +110,10 @@ public:
 	MOCK_METHOD(void, getTime, (TimeStructure& time), (override));
 };
 
-class TimeSynchronizator
-{
-	TimeStructure time_;
-	IClock& timeSource_;
-
-public:
-	TimeSynchronizator(IClock& timeSource) : timeSource_(timeSource) {}
-	void updateTime() { timeSource_.getTime(time_); };
-
-	int getYear() {return time_.year;};
-	int getMonth() { return time_.month; };
-	int getDay() { return time_.day; };
-	int getHour() { return time_.hour; };
-	int getMin() { return time_.min; };
-	int getSec() { return time_.sec; };
-	int getuSec() { return time_.uSec; };
-};
-
-class TimeSynchronizatorTest :public ::testing::Test
-{
-};
-
-class timeToString
+class TimeToString
 {
 public:
-	timeToString() { ; }
+	TimeToString() { ; }
 	std::string converTime(TimeStructure& time)
 	{
 		std::ostringstream oss;
@@ -152,6 +130,31 @@ public:
 		return result;
 	}
 };
+
+class TimeSynchronizator
+{
+	TimeStructure time_;
+	IClock& timeSource_;
+	TimeToString converter_;
+
+public:
+	TimeSynchronizator(IClock& timeSource) : timeSource_(timeSource) {}
+	void updateTime() { timeSource_.getTime(time_); };
+
+	int getYear() {return time_.year;};
+	int getMonth() { return time_.month; };
+	int getDay() { return time_.day; };
+	int getHour() { return time_.hour; };
+	int getMin() { return time_.min; };
+	int getSec() { return time_.sec; };
+	int getuSec() { return time_.uSec; };
+	std::string getTime() { return converter_.converTime(time_); }
+};
+
+class TimeSynchronizatorTest :public ::testing::Test
+{
+};
+
 
 TEST_F(TimeSynchronizatorTest, testDataStructure)
 {
@@ -186,21 +189,46 @@ TEST_F(TimeSynchronizatorTest, testDataStructure)
 
 TEST_F(TimeSynchronizatorTest, testMakingTimeString)
 {
-	timeToString converter;
+	TimeToString converter;
 
 	TimeStructure customTime = {
-	.year = 2025,
-	.month = 4,
-	.day = 5,
-	.hour = 20,
-	.min = 21,
-	.sec = 29,
-	.uSec = 98
+		.year = 2025,
+		.month = 4,
+		.day = 5,
+		.hour = 20,
+		.min = 21,
+		.sec = 29,
+		.uSec = 98
 	};
 
 	std::string timeString = converter.converTime(customTime);
 
 	EXPECT_EQ(timeString, "2025-04-05 20:21:29.000098");
+}
+
+TEST_F(TimeSynchronizatorTest, testTimeStructureThenMakeString)
+{
+	MockClock clock;
+	TimeStructure customTime = {
+		.year = 1996,
+		.month = 12,
+		.day = 8,
+		.hour = 18,
+		.min = 00,
+		.sec = 8,
+		.uSec = 14052
+	};
+
+	TimeSynchronizator obj(clock);
+
+	EXPECT_CALL(clock, getTime(testing::_))
+		.WillOnce(testing::Invoke([&customTime](TimeStructure& time) {
+		time = customTime;
+			}));
+
+	obj.updateTime();
+
+	EXPECT_EQ(obj.getTime(), "1996-12-08 18:00:08.014052");
 }
 
 int main(int argc, char** argv)
