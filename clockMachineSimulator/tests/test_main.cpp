@@ -1,9 +1,12 @@
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
 #include <memory>
 #include <chrono>
 #include <iostream>
 
 #include "clockMachineSimulator.h"
+
+
 
 class clockMachineSimulatorTest : public ::testing::Test
 {
@@ -15,7 +18,6 @@ protected:
 		obj = std::make_unique<clockMachineSimulator>();
 	}
 };
-
 TEST_F(clockMachineSimulatorTest, checkConstructor)
 {
 	EXPECT_EQ(obj->getNoUpdatedTime(), "1900-01-01 00:00:00.000000");
@@ -80,6 +82,61 @@ TEST_F(clockMachineSimulatorTest, testOffsetYear)
 
 	EXPECT_EQ(obj->getYear(), now_tm.tm_year + offsetYear);
 }*/
+
+
+struct TimeStructure
+{
+	int year;
+	int month;
+	int day;
+	int hour; //24h format
+	int min;
+	int sec;
+
+	long long uSec;
+};
+
+class IClock
+{
+public:
+	virtual void getTime(TimeStructure& time) = 0;
+	virtual ~IClock() = default;
+};
+
+class MockClock :public IClock
+{
+public: 
+	MOCK_METHOD(void, getTime, (TimeStructure& time), (override));
+};
+
+class TimeSynchronizator
+{
+	TimeStructure time_;
+	IClock& timeSource_;
+
+public:
+	TimeSynchronizator(IClock& timeSource) : timeSource_(timeSource) {}
+	void updateTime() { ; };
+
+	int getYear() {return 0;};
+};
+
+class TimeSynchronizatorTest :public ::testing::Test
+{
+};
+
+TEST_F(TimeSynchronizatorTest, testDataStructure)
+{
+	MockClock clock;
+	TimeStructure customTime = { 2025, 5, 28, 18, 19, 20, 100200 };
+
+	TimeSynchronizator obj(clock);
+
+	obj.updateTime();
+
+	EXPECT_EQ(obj.getYear(), 2025);
+
+}
 
 int main(int argc, char** argv)
 {

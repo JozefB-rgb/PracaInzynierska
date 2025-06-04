@@ -14,6 +14,11 @@ endif()
 include_directories(${GTEST_INCLUDE_DIRS} src/)
 
 add_executable(testClockMachineSimulator tests/test_main.cpp src/clockMachineSimulator.h src/clockMachineSimulator.cpp)
+
+#enables google::test
 target_link_libraries(testClockMachineSimulator GTest::GTest GTest::Main)
+
+#enables google::mock
+target_link_libraries(testClockMachineSimulator gmock gmock_main)
 
 

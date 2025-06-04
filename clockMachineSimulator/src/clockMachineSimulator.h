@@ -35,4 +35,15 @@ public:
 	int getuSec();
 };
 
+class timeSource
+{
+public:
+	int getYear();
+	int getMonth();
+	int getDay();
+	int getHour();
+	int getMin();
+	int getSec();
+};
+
 #endif //CLOCK_MACHINE_SIMULATOR_H
