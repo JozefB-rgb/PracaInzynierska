@@ -1,4 +1,4 @@
-add_executable(clockMachineSimulator src/main.cpp src/clockMachineSimulator.h src/clockMachineSimulator.cpp)
+add_executable(clockMachineSimulator src/main.cpp  )
 
 # Find GoogleTest (installed via vcpkg)
 find_package(GTest QUIET)
@@ -13,7 +13,7 @@ if(NOT GTest_FOUND)
 endif()
 include_directories(${GTEST_INCLUDE_DIRS} src/)
 
-add_executable(testClockMachineSimulator tests/test_main.cpp src/clockMachineSimulator.h src/clockMachineSimulator.cpp)
+add_executable(testClockMachineSimulator tests/test_main.cpp)
 
 #enables google::test
 target_link_libraries(testClockMachineSimulator GTest::GTest GTest::Main)
