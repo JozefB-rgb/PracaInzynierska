@@ -34,7 +34,7 @@ class TimeToString
 {
 public:
 	TimeToString() { ; }
-	std::string converTime(TimeStructure& time)
+	std::string convertTime(TimeStructure& time)
 	{
 		std::ostringstream oss;
 
@@ -68,7 +68,7 @@ public:
 	int getMin() { return time_.min; };
 	int getSec() { return time_.sec; };
 	int getuSec() { return time_.uSec; };
-	std::string getTime() { return converter_.converTime(time_); }
+	std::string getTime() { return converter_.convertTime(time_); }
 };
 
 class TimeSynchronizatorTest :public ::testing::Test
@@ -78,6 +78,7 @@ class TimeSynchronizatorTest :public ::testing::Test
 
 TEST_F(TimeSynchronizatorTest, testDataStructure)
 {
+	//created mockClock that will pass custom time to module
 	MockClock clock;
 	TimeStructure customTime = {
 		.year = 2025,
@@ -88,8 +89,10 @@ TEST_F(TimeSynchronizatorTest, testDataStructure)
 		.sec = 20,
 		.uSec = 100200
 	};
+
 	TimeSynchronizator obj(clock);
 
+	//making clock return custom time
 	EXPECT_CALL(clock, getTime(testing::_))
 		.WillOnce(testing::Invoke([&customTime](TimeStructure& time) {
 		time = customTime;
@@ -110,7 +113,6 @@ TEST_F(TimeSynchronizatorTest, testDataStructure)
 TEST_F(TimeSynchronizatorTest, testMakingTimeString)
 {
 	TimeToString converter;
-
 	TimeStructure customTime = {
 		.year = 2025,
 		.month = 4,
@@ -121,13 +123,15 @@ TEST_F(TimeSynchronizatorTest, testMakingTimeString)
 		.uSec = 98
 	};
 
-	std::string timeString = converter.converTime(customTime);
+	//converts data from structure to string
+	std::string timeString = converter.convertTime(customTime);
 
 	EXPECT_EQ(timeString, "2025-04-05 20:21:29.000098");
 }
 
 TEST_F(TimeSynchronizatorTest, testTimeStructureThenMakeString)
 {
+	//created mockClock that will pass custom time to module
 	MockClock clock;
 	TimeStructure customTime = {
 		.year = 1996,
@@ -141,6 +145,7 @@ TEST_F(TimeSynchronizatorTest, testTimeStructureThenMakeString)
 
 	TimeSynchronizator obj(clock);
 
+	//making clock return custom time
 	EXPECT_CALL(clock, getTime(testing::_))
 		.WillOnce(testing::Invoke([&customTime](TimeStructure& time) {
 		time = customTime;
