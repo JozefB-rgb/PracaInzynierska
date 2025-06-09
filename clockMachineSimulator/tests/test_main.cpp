@@ -156,6 +156,73 @@ TEST_F(TimeSynchronizatorTest, testTimeStructureThenMakeString)
 	EXPECT_EQ(obj.getTime(), "1996-12-08 18:00:08.014052");
 }
 
+//test almost the whole module
+//creates 2 intances on the same decice, connects them to each other,
+//then each one sending its time to other,
+//the result time should be in this case arithmetic average form 2 time values
+TEST_F(TimeSynchronizatorTest, test2ModulesInOneMachine)
+{
+	//inside the files there are IP and port adresses of the other program
+	std::string pathToAdressesFileProgram1;
+	std::string pathToAdressesFileProgram2;
+
+	//set up custom MockClocks and time values for programs
+	MockClock clock1,clock2;
+	TimeStructure customTime1 = {
+		.year = 2025,
+		.month = 6,
+		.day = 8,
+		.hour = 17,
+		.min = 8,
+		.sec = 47,
+		.uSec = 60731
+	};
+	TimeStructure customTime2 = {
+		.year = 2025,
+		.month = 6,
+		.day = 8,
+		.hour = 16,
+		.min = 58,
+		.sec = 3,
+		.uSec = 95
+	};
+	EXPECT_CALL(clock1, getTime(testing::_))
+		.WillOnce(testing::Invoke([&customTime1](TimeStructure& time) {
+		time = customTime1;
+			}));
+	EXPECT_CALL(clock2, getTime(testing::_))
+		.WillOnce(testing::Invoke([&customTime2](TimeStructure& time) {
+		time = customTime2;
+			}));
+
+	//the know and expected value of time after synchronization
+	std::string averageCustomTime = "0000-00-00 00:00:00.000000"; //to be calculated
+
+	//zero means synchronize only after manual intervention
+	int synchronizeAfterSeconds = 0;
+
+	TimeSynchronizator program1(pathToAdressesFileProgram1, synchronizeAfterSeconds);
+	TimeSynchronizator program2(pathToAdressesFileProgram2, synchronizeAfterSeconds);
+
+	//checks if both programs are connected
+	EXPECT_EQ(program1.isConnectedToAll(), true);
+	EXPECT_EQ(program2.isConnectedToAll(), true);
+
+	//only one synchronize command 
+	program1.synchronize();
+	program2.synchronize();
+
+	//makes sure that the synchronization process finished and ended successfully
+	EXPECT_EQ(program1.isSynchronized(), true);
+	EXPECT_EQ(program2.isSynchronized(), true);
+
+	std::string program1GlobalTime = program1.getTime();
+	std::string program2GlobalTime = program1.getTime();
+
+	EXPECT_EQ(program1GlobalTime, averageCustomTime);
+	EXPECT_EQ(program2GlobalTime, averageCustomTime);
+}
+
 int main(int argc, char** argv)
 {
 	::testing::InitGoogleTest(&argc, argv);
