@@ -54,18 +54,12 @@ public:
 };
 
 
-class TimeToString
+class TimeStructureStringConverter
 {
 public:
-	TimeToString();
-	std::string convertTime(TimeStructure& time);
-};
-
-class StringToTime
-{
-public:
-	StringToTime();
-	TimeStructure convertTime(std::string stringTime);
+	TimeStructureStringConverter();
+	std::string timeToString(TimeStructure& time);
+	TimeStructure stringToTime(std::string stringTime);
 };
 
 
@@ -76,7 +70,7 @@ class TimeSynchronizator {
 
 	TimeStructure time_;
 	IClock& timeSource_;
-	TimeToString converter_;
+	TimeStructureStringConverter converter_;
 	std::string pathToAdressesFile_;
 
 public:

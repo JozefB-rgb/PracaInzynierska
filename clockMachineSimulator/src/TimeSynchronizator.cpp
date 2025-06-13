@@ -4,9 +4,9 @@
 #include <iostream>
 #include <sstream>
 
-//class TimeToString
-TimeToString::TimeToString() { ; }
-std::string TimeToString::convertTime(TimeStructure& time)
+//class TimeStructureStringConverter
+TimeStructureStringConverter::TimeStructureStringConverter() { ; }
+std::string TimeStructureStringConverter::timeToString(TimeStructure& time)
 {
 	std::ostringstream oss;
 
@@ -21,12 +21,7 @@ std::string TimeToString::convertTime(TimeStructure& time)
 	std::string result = oss.str();
 	return result;
 }
-//~class TimeToString
-
-
-//class StringToTime
-StringToTime::StringToTime() {}
-TimeStructure StringToTime::convertTime(std::string stringTime) {
+TimeStructure TimeStructureStringConverter::stringToTime(std::string stringTime) {
 	//stringTime format: "0000-00-00 00:00:00.000000"
 	TimeStructure customTime = {
 		.year = stoi(stringTime.substr(0,4)),
@@ -39,9 +34,7 @@ TimeStructure StringToTime::convertTime(std::string stringTime) {
 	};
 	return customTime;
 }
-
-
-//~class StringToTime
+//~class TimeStructureStringConverter
 
 
 //class TimeSynchronizator
@@ -68,5 +61,5 @@ int TimeSynchronizator::getHour() { return time_.hour; };
 int TimeSynchronizator::getMin() { return time_.min; };
 int TimeSynchronizator::getSec() { return time_.sec; };
 int TimeSynchronizator::getuSec() { return time_.uSec; };
-std::string TimeSynchronizator::getTime() { return converter_.convertTime(time_); }
+std::string TimeSynchronizator::getTime() { return converter_.timeToString(time_); }
 //~class TimeSynchronizator

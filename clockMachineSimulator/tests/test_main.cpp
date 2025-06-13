@@ -47,7 +47,7 @@ TEST_F(TimeSynchronizatorTest, testDataStructure)
 
 TEST_F(TimeSynchronizatorTest, testMakingTimeString)
 {
-	TimeToString converter;
+	TimeStructureStringConverter converter;
 	TimeStructure customTime = {
 		.year = 2025,
 		.month = 4,
@@ -59,7 +59,7 @@ TEST_F(TimeSynchronizatorTest, testMakingTimeString)
 	};
 
 	//converts data from structure to string
-	std::string timeString = converter.convertTime(customTime);
+	std::string timeString = converter.timeToString(customTime);
 
 	EXPECT_EQ(timeString, "2025-04-05 20:21:29.000098");
 }
@@ -76,8 +76,8 @@ TEST_F(TimeSynchronizatorTest, testStringToTimeStructure) {
 		.uSec = 5310
 	};
 
-	StringToTime converter;
-	TimeStructure timeConverted = converter.convertTime(timeString);
+	TimeStructureStringConverter converter;
+	TimeStructure timeConverted = converter.stringToTime(timeString);
 
 	EXPECT_EQ(time, timeConverted);
 }
@@ -93,11 +93,10 @@ TEST_F(TimeSynchronizatorTest, testTimeStructureToStringToTimeStructure) {
 		.uSec = 1010
 	};
 
-	TimeToString converter1;
-	StringToTime converter2;
+	TimeStructureStringConverter converter;
 
-	std::string timeString = converter1.convertTime(time);
-	TimeStructure timeAfterConvertion = converter2.convertTime(timeString);
+	std::string timeString = converter.timeToString(time);
+	TimeStructure timeAfterConvertion = converter.stringToTime(timeString);
 
 	EXPECT_EQ(time, timeAfterConvertion);
 }
@@ -105,11 +104,10 @@ TEST_F(TimeSynchronizatorTest, testTimeStructureToStringToTimeStructure) {
 TEST_F(TimeSynchronizatorTest, testTimeStringToTimeStructureToTimeString) {
 	std::string timeString = "5020-32-83 27:66:70.009041";
 
-	StringToTime converter1;
-	TimeToString converter2;
+	TimeStructureStringConverter converter;
 
-	TimeStructure time = converter1.convertTime(timeString);
-	std::string timeStringAfterConvertion = converter2.convertTime(time);
+	TimeStructure time = converter.stringToTime(timeString);
+	std::string timeStringAfterConvertion = converter.timeToString(time);
 
 	EXPECT_EQ(timeString, timeStringAfterConvertion);
 }
