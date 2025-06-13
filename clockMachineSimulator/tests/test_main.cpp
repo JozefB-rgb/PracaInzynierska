@@ -53,15 +53,33 @@ public:
 
 class TimeSynchronizator
 {
+	bool severRunning_ = false;
+	bool connectedToAll_ = false;
+	bool timeSynchronized_ = false;
+
 	TimeStructure time_;
 	IClock& timeSource_;
 	TimeToString converter_;
+	std::string pathToAdressesFile_;
 
 public:
 	TimeSynchronizator(IClock& timeSource) : timeSource_(timeSource) {}
-	void updateTime() { timeSource_.getTime(time_); };
+	TimeSynchronizator(IClock& timeSource, std::string pathToAdressesFile) : timeSource_(timeSource), pathToAdressesFile_(pathToAdressesFile) {}
 
-	int getYear() {return time_.year;};
+	bool settingUp() {
+		if (severRunning_) return true;
+		else return false;
+	}
+	bool waitingForConnection() {
+		if (connectedToAll_) return false;
+		else return true;
+	}
+	bool isSynchronized() { return timeSynchronized_; };
+
+	void updateTime() { timeSource_.getTime(time_); };
+	void synchronizeTime() { ; };
+
+	int getYear() { return time_.year; };
 	int getMonth() { return time_.month; };
 	int getDay() { return time_.day; };
 	int getHour() { return time_.hour; };
@@ -162,10 +180,6 @@ TEST_F(TimeSynchronizatorTest, testTimeStructureThenMakeString)
 //the result time should be in this case arithmetic average form 2 time values
 TEST_F(TimeSynchronizatorTest, test2ModulesInOneMachine)
 {
-	//inside the files there are IP and port adresses of the other program
-	std::string pathToAdressesFileProgram1;
-	std::string pathToAdressesFileProgram2;
-
 	//set up custom MockClocks and time values for programs
 	MockClock clock1,clock2;
 	TimeStructure customTime1 = {
@@ -198,11 +212,12 @@ TEST_F(TimeSynchronizatorTest, test2ModulesInOneMachine)
 	//the know and expected value of time after synchronization
 	std::string averageCustomTime = "0000-00-00 00:00:00.000000"; //to be calculated
 
-	//zero means synchronize only after manual intervention
-	int synchronizeAfterSeconds = 0;
+	//inside the files there are IP and port adresses of the other program
+	std::string pathToAdressesFileProgram1 = "";
+	std::string pathToAdressesFileProgram2 = "";
 
-	TimeSynchronizator program1(pathToAdressesFileProgram1, synchronizeAfterSeconds);
-	TimeSynchronizator program2(pathToAdressesFileProgram2, synchronizeAfterSeconds);
+	TimeSynchronizator program1(clock1, pathToAdressesFileProgram1);
+	TimeSynchronizator program2(clock2, pathToAdressesFileProgram2);
 
 	//wait till the servers sets up 
 	int maxSetUptimeOut = 10;	//ms
@@ -249,8 +264,8 @@ TEST_F(TimeSynchronizatorTest, test2ModulesInOneMachine)
 	}
 
 	//only one synchronize command 
-	program1.synchronize();
-	program2.synchronize();
+	program1.synchronizeTime();
+	program2.synchronizeTime();
 
 	//makes sure that the synchronization process finished and ended successfully
 	EXPECT_EQ(program1.isSynchronized(), true);
