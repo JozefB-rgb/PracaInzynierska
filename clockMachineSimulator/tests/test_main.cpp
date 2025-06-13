@@ -82,6 +82,38 @@ TEST_F(TimeSynchronizatorTest, testStringToTimeStructure) {
 	EXPECT_EQ(time, timeConverted);
 }
 
+TEST_F(TimeSynchronizatorTest, testTimeStructureToStringToTimeStructure) {
+	TimeStructure time = {
+		.year = 925,
+		.month = 8,
+		.day = 30,
+		.hour = 23,
+		.min = 04,
+		.sec = 00,
+		.uSec = 1010
+	};
+
+	TimeToString converter1;
+	StringToTime converter2;
+
+	std::string timeString = converter1.convertTime(time);
+	TimeStructure timeAfterConvertion = converter2.convertTime(timeString);
+
+	EXPECT_EQ(time, timeAfterConvertion);
+}
+
+TEST_F(TimeSynchronizatorTest, testTimeStringToTimeStructureToTimeString) {
+	std::string timeString = "5020-32-83 27:66:70.009041";
+
+	StringToTime converter1;
+	TimeToString converter2;
+
+	TimeStructure time = converter1.convertTime(timeString);
+	std::string timeStringAfterConvertion = converter2.convertTime(time);
+
+	EXPECT_EQ(timeString, timeStringAfterConvertion);
+}
+
 TEST_F(TimeSynchronizatorTest, testTimeStructureThenMakeString)
 {
 	//created mockClock that will pass custom time to module
