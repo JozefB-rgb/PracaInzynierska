@@ -3,6 +3,5 @@
 
 int main()
 {
-	std::cout << "Hello Wddsdsdsd" << std::endl;
-	std::cout << "Hell" << std::endl;
+	std::cout << "Hello WOrld" << std::endl;
 }

@@ -54,7 +54,9 @@ public:
 	bool waitingForConnection();
 	bool isSynchronized();
 
+	//update TimeStrucure values form source clock
 	void updateTime();
+	//getting time form remote devices (via socket) and avrage it with its own
 	void synchronizeTime();
 
 	int getYear();
