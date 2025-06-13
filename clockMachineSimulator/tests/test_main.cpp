@@ -204,6 +204,28 @@ TEST_F(TimeSynchronizatorTest, test2ModulesInOneMachine)
 	TimeSynchronizator program1(pathToAdressesFileProgram1, synchronizeAfterSeconds);
 	TimeSynchronizator program2(pathToAdressesFileProgram2, synchronizeAfterSeconds);
 
+	//wait till the servers sets up 
+	int maxtimeOut = 10;	//ms
+	int msWaited = 0;
+	while (program1.isServerBooting)
+	{
+		if (msWaited >= maxtimeOut) {
+			FAIL() << "Program1 server cannont set up in " << maxtimeOut << "ms" << std::endl;
+			break;
+		}
+		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		msWaited += 1;
+	}
+	while (program2.isServerBooting)
+	{
+		if (msWaited >= maxtimeOut) {
+			FAIL() << "Program2 server cannont set up in " << maxtimeOut << "ms" << std::endl;
+			break;
+		}
+		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		msWaited += 1;
+	}
+
 	//checks if both programs are connected
 	EXPECT_EQ(program1.isConnectedToAll(), true);
 	EXPECT_EQ(program2.isConnectedToAll(), true);
