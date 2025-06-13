@@ -1,96 +1,10 @@
 #include <gtest/gtest.h>
-#include <gmock/gmock.h>
 #include <memory>
 #include <chrono>
 #include <iostream>
 #include <string>
 
 #include "TimeSynchronizator.h"
-
-
-struct TimeStructure
-{
-	int year;
-	int month;
-	int day;
-	int hour; //24h format
-	int min;
-	int sec;
-
-	long long uSec;
-};
-
-class IClock
-{
-public:
-	virtual void getTime(TimeStructure& time) = 0;
-	virtual ~IClock() = default;
-};
-
-class MockClock :public IClock
-{
-public: 
-	MOCK_METHOD(void, getTime, (TimeStructure& time), (override));
-};
-
-class TimeToString
-{
-public:
-	TimeToString() { ; }
-	std::string convertTime(TimeStructure& time)
-	{
-		std::ostringstream oss;
-
-		oss << std::setw(4) << std::setfill('0') << time.year << "-" \
-			<< std::setw(2) << std::setfill('0') << time.month << "-" \
-			<< std::setw(2) << std::setfill('0') << time.day << " "
-			<< std::setw(2) << std::setfill('0') << time.hour << ":"
-			<< std::setw(2) << std::setfill('0') << time.min << ":"
-			<< std::setw(2) << std::setfill('0') << time.sec << "."
-			<< std::setw(6) << std::setfill('0') << time.uSec;
-
-		std::string result = oss.str();
-		return result;
-	}
-};
-
-class TimeSynchronizator
-{
-	bool severRunning_ = false;
-	bool connectedToAll_ = false;
-	bool timeSynchronized_ = false;
-
-	TimeStructure time_;
-	IClock& timeSource_;
-	TimeToString converter_;
-	std::string pathToAdressesFile_;
-
-public:
-	TimeSynchronizator(IClock& timeSource) : timeSource_(timeSource) {}
-	TimeSynchronizator(IClock& timeSource, std::string pathToAdressesFile) : timeSource_(timeSource), pathToAdressesFile_(pathToAdressesFile) {}
-
-	bool settingUp() {
-		if (severRunning_) return true;
-		else return false;
-	}
-	bool waitingForConnection() {
-		if (connectedToAll_) return false;
-		else return true;
-	}
-	bool isSynchronized() { return timeSynchronized_; };
-
-	void updateTime() { timeSource_.getTime(time_); };
-	void synchronizeTime() { ; };
-
-	int getYear() { return time_.year; };
-	int getMonth() { return time_.month; };
-	int getDay() { return time_.day; };
-	int getHour() { return time_.hour; };
-	int getMin() { return time_.min; };
-	int getSec() { return time_.sec; };
-	int getuSec() { return time_.uSec; };
-	std::string getTime() { return converter_.convertTime(time_); }
-};
 
 class TimeSynchronizatorTest :public ::testing::Test
 {

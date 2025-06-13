@@ -1,5 +1,51 @@
 #include "TimeSynchronizator.h"
 
+#include <iomanip>
 #include <iostream>
+#include <sstream>
 
+//class TimeToString
+TimeToString::TimeToString() { ; }
+std::string TimeToString::convertTime(TimeStructure& time)
+{
+	std::ostringstream oss;
 
+	oss << std::setw(4) << std::setfill('0') << time.year << "-" \
+		<< std::setw(2) << std::setfill('0') << time.month << "-" \
+		<< std::setw(2) << std::setfill('0') << time.day << " "
+		<< std::setw(2) << std::setfill('0') << time.hour << ":"
+		<< std::setw(2) << std::setfill('0') << time.min << ":"
+		<< std::setw(2) << std::setfill('0') << time.sec << "."
+		<< std::setw(6) << std::setfill('0') << time.uSec;
+
+	std::string result = oss.str();
+	return result;
+}
+//~class TimeToString
+
+//class TimeSynchronizator
+TimeSynchronizator::TimeSynchronizator(IClock& timeSource) : timeSource_(timeSource) {}
+TimeSynchronizator::TimeSynchronizator(IClock& timeSource, std::string pathToAdressesFile) : timeSource_(timeSource), pathToAdressesFile_(pathToAdressesFile) {}
+
+bool TimeSynchronizator::settingUp() {
+	if (severRunning_) return true;
+	else return false;
+}
+bool TimeSynchronizator::waitingForConnection() {
+	if (connectedToAll_) return false;
+	else return true;
+}
+bool TimeSynchronizator::isSynchronized() { return timeSynchronized_; };
+
+void TimeSynchronizator::updateTime() { timeSource_.getTime(time_); };
+void TimeSynchronizator::synchronizeTime() { ; };
+
+int TimeSynchronizator::getYear() { return time_.year; };
+int TimeSynchronizator::getMonth() { return time_.month; };
+int TimeSynchronizator::getDay() { return time_.day; };
+int TimeSynchronizator::getHour() { return time_.hour; };
+int TimeSynchronizator::getMin() { return time_.min; };
+int TimeSynchronizator::getSec() { return time_.sec; };
+int TimeSynchronizator::getuSec() { return time_.uSec; };
+std::string TimeSynchronizator::getTime() { return converter_.convertTime(time_); }
+//~class TimeSynchronizator

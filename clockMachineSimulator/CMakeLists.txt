@@ -11,7 +11,6 @@ if(NOT GTest_FOUND)
 	#refind boost package
 	find(GTest REQUIRED)
 endif()
-include_directories(${GTEST_INCLUDE_DIRS} src/)
 
 add_executable(testClockMachineSimulator tests/test_main.cpp src/TimeSynchronizator.h src/TimeSynchronizator.cpp)
 
