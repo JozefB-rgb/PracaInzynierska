@@ -64,6 +64,24 @@ TEST_F(TimeSynchronizatorTest, testMakingTimeString)
 	EXPECT_EQ(timeString, "2025-04-05 20:21:29.000098");
 }
 
+TEST_F(TimeSynchronizatorTest, testStringToTimeStructure) {
+	std::string timeString = "1997-11-07 04:12:09.005310";
+	TimeStructure time = {
+		.year = 1997,
+		.month = 11,
+		.day = 7,
+		.hour = 4,
+		.min = 12,
+		.sec = 9,
+		.uSec = 5310
+	};
+
+	StringToTime converter;
+	TimeStructure timeConverted = converter.convertTime(timeString);
+
+	EXPECT_EQ(time, timeConverted);
+}
+
 TEST_F(TimeSynchronizatorTest, testTimeStructureThenMakeString)
 {
 	//created mockClock that will pass custom time to module

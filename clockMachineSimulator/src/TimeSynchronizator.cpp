@@ -23,6 +23,27 @@ std::string TimeToString::convertTime(TimeStructure& time)
 }
 //~class TimeToString
 
+
+//class StringToTime
+StringToTime::StringToTime() {}
+TimeStructure StringToTime::convertTime(std::string stringTime) {
+	//stringTime format: "0000-00-00 00:00:00.000000"
+	TimeStructure customTime = {
+		.year = stoi(stringTime.substr(0,4)),
+		.month = stoi(stringTime.substr(5,2)),
+		.day = stoi(stringTime.substr(8,2)),
+		.hour = stoi(stringTime.substr(11,2)),
+		.min = stoi(stringTime.substr(14,2)),
+		.sec = stoi(stringTime.substr(17,2)),
+		.uSec = stoi(stringTime.substr(20,6))
+	};
+	return customTime;
+}
+
+
+//~class StringToTime
+
+
 //class TimeSynchronizator
 TimeSynchronizator::TimeSynchronizator(IClock& timeSource) : timeSource_(timeSource) {}
 TimeSynchronizator::TimeSynchronizator(IClock& timeSource, std::string pathToAdressesFile) : timeSource_(timeSource), pathToAdressesFile_(pathToAdressesFile) {}
