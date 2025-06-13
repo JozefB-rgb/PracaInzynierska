@@ -205,21 +205,22 @@ TEST_F(TimeSynchronizatorTest, test2ModulesInOneMachine)
 	TimeSynchronizator program2(pathToAdressesFileProgram2, synchronizeAfterSeconds);
 
 	//wait till the servers sets up 
-	int maxtimeOut = 10;	//ms
+	int maxSetUptimeOut = 10;	//ms
 	int msWaited = 0;
-	while (program1.isServerBooting)
+	while (!program1.settingUp())
 	{
-		if (msWaited >= maxtimeOut) {
-			FAIL() << "Program1 server cannont set up in " << maxtimeOut << "ms" << std::endl;
+		if (msWaited >= maxSetUptimeOut) {
+			FAIL() << "Program1 server cannont set up in " << maxSetUptimeOut << "ms" << std::endl;
 			break;
 		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		msWaited += 1;
 	}
-	while (program2.isServerBooting)
+	msWaited = 0;
+	while (!program2.settingUp())
 	{
-		if (msWaited >= maxtimeOut) {
-			FAIL() << "Program2 server cannont set up in " << maxtimeOut << "ms" << std::endl;
+		if (msWaited >= maxSetUptimeOut) {
+			FAIL() << "Program2 server cannont set up in " << maxSetUptimeOut << "ms" << std::endl;
 			break;
 		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -227,8 +228,25 @@ TEST_F(TimeSynchronizatorTest, test2ModulesInOneMachine)
 	}
 
 	//checks if both programs are connected
-	EXPECT_EQ(program1.isConnectedToAll(), true);
-	EXPECT_EQ(program2.isConnectedToAll(), true);
+	int maxWaitConnectionTimeOut = 10;
+	msWaited = 0;
+	while (program1.waitingForConnection()) {
+		if (msWaited >= maxWaitConnectionTimeOut) {
+			FAIL() << "Program1 cannot connected to all remote devices in " << maxWaitConnectionTimeOut << std::endl;
+			break;
+		}
+		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		msWaited += 1;
+	}
+	msWaited = 0;
+	while (program2.waitingForConnection()) {
+		if (msWaited >= maxWaitConnectionTimeOut) {
+			FAIL() << "Program1 cannot connected to all remote devices in " << maxWaitConnectionTimeOut << std::endl;
+			break;
+		}
+		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		msWaited += 1;
+	}
 
 	//only one synchronize command 
 	program1.synchronize();
