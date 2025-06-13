@@ -5,6 +5,9 @@
 #include <iostream>
 #include <string>
 
+#include "TimeSynchronizator.h"
+
+
 struct TimeStructure
 {
 	int year;
