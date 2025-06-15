@@ -28,17 +28,11 @@ struct TimeStructure
 			uSec == other.uSec;
 	}
 };
-inline void PrintTo(const TimeStructure& time, std::ostream* os) {
-	*os << std::setw(4) << std::setfill('0') << time.year << "-" \
-		<< std::setw(2) << std::setfill('0') << time.month << "-" \
-		<< std::setw(2) << std::setfill('0') << time.day << " "
-		<< std::setw(2) << std::setfill('0') << time.hour << ":"
-		<< std::setw(2) << std::setfill('0') << time.min << ":"
-		<< std::setw(2) << std::setfill('0') << time.sec << "."
-		<< std::setw(6) << std::setfill('0') << time.uSec;
-}
+//for printhing to console during project Testing
+inline void PrintTo(TimeStructure& time, std::ostream* os);
 
 
+//the interface to get time values from clock source
 class IClock
 {
 public:
@@ -47,13 +41,14 @@ public:
 };
 
 
+//mock for using during testing
 class MockClock :public IClock
 {
 public:
 	MOCK_METHOD(void, getTime, (TimeStructure& time), (override));
 };
 
-
+//connvets time data to TimeStructure or to String
 class TimeStructureStringConverter
 {
 public:

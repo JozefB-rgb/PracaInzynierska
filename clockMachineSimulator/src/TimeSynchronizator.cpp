@@ -4,7 +4,14 @@
 #include <iostream>
 #include <sstream>
 
+//for printhing to console during project Testing
+inline void PrintTo(TimeStructure& time, std::ostream* os) {
+	TimeStructureStringConverter converter;
+	*os << converter.timeToString(time);
+};
+
 //class TimeStructureStringConverter
+//connvets time data to TimeStructure or to String
 TimeStructureStringConverter::TimeStructureStringConverter() { ; }
 std::string TimeStructureStringConverter::timeToString(TimeStructure& time)
 {

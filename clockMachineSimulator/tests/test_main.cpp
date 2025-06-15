@@ -11,10 +11,8 @@ class TimeSynchronizatorTest :public ::testing::Test
 };
 
 
-TEST_F(TimeSynchronizatorTest, testDataStructure)
-{
-	//created mockClock that will pass custom time to module
-	MockClock clock;
+TEST_F(TimeSynchronizatorTest, testDataStructure) {
+	//creates some custom time data
 	TimeStructure customTime = {
 		.year = 2025,
 		.month = 5,
@@ -25,14 +23,17 @@ TEST_F(TimeSynchronizatorTest, testDataStructure)
 		.uSec = 100200
 	};
 
-	TimeSynchronizator obj(clock);
-
-	//making clock return custom time
+	//created mockClock and set return custom time
+	MockClock clock;
 	EXPECT_CALL(clock, getTime(testing::_))
 		.WillOnce(testing::Invoke([&customTime](TimeStructure& time) {
 		time = customTime;
 			}));
 
+	//created main object
+	TimeSynchronizator obj(clock);
+
+	//updates TimeStructure inside TimeSynchonizator with MockClock values
 	obj.updateTime();
 
 	EXPECT_EQ(obj.getYear(), 2025);
@@ -45,9 +46,8 @@ TEST_F(TimeSynchronizatorTest, testDataStructure)
 
 }
 
-TEST_F(TimeSynchronizatorTest, testMakingTimeString)
-{
-	TimeStructureStringConverter converter;
+TEST_F(TimeSynchronizatorTest, testMakingTimeString) {
+	//creates some custom time data
 	TimeStructure customTime = {
 		.year = 2025,
 		.month = 4,
@@ -58,13 +58,15 @@ TEST_F(TimeSynchronizatorTest, testMakingTimeString)
 		.uSec = 98
 	};
 
-	//converts data from structure to string
+	//converts data from TimeStructure to string
+	TimeStructureStringConverter converter;
 	std::string timeString = converter.timeToString(customTime);
 
 	EXPECT_EQ(timeString, "2025-04-05 20:21:29.000098");
 }
 
 TEST_F(TimeSynchronizatorTest, testStringToTimeStructure) {
+	//creates some custom time data
 	std::string timeString = "1997-11-07 04:12:09.005310";
 	TimeStructure time = {
 		.year = 1997,
@@ -76,6 +78,7 @@ TEST_F(TimeSynchronizatorTest, testStringToTimeStructure) {
 		.uSec = 5310
 	};
 
+	//converts data from string to TimeStructure
 	TimeStructureStringConverter converter;
 	TimeStructure timeConverted = converter.stringToTime(timeString);
 
@@ -83,6 +86,7 @@ TEST_F(TimeSynchronizatorTest, testStringToTimeStructure) {
 }
 
 TEST_F(TimeSynchronizatorTest, testTimeStructureToStringToTimeStructure) {
+	//creates some custom time data
 	TimeStructure time = {
 		.year = 925,
 		.month = 8,
@@ -93,8 +97,8 @@ TEST_F(TimeSynchronizatorTest, testTimeStructureToStringToTimeStructure) {
 		.uSec = 1010
 	};
 
+	//converts data from TimeStructure to string and then back to TimeStructure
 	TimeStructureStringConverter converter;
-
 	std::string timeString = converter.timeToString(time);
 	TimeStructure timeAfterConvertion = converter.stringToTime(timeString);
 
@@ -102,20 +106,19 @@ TEST_F(TimeSynchronizatorTest, testTimeStructureToStringToTimeStructure) {
 }
 
 TEST_F(TimeSynchronizatorTest, testTimeStringToTimeStructureToTimeString) {
+	//creates some custom time data
 	std::string timeString = "5020-32-83 27:66:70.009041";
 
+	//converts data from string to TimeStructure and then back to string
 	TimeStructureStringConverter converter;
-
 	TimeStructure time = converter.stringToTime(timeString);
 	std::string timeStringAfterConvertion = converter.timeToString(time);
 
 	EXPECT_EQ(timeString, timeStringAfterConvertion);
 }
 
-TEST_F(TimeSynchronizatorTest, testTimeStructureThenMakeString)
-{
-	//created mockClock that will pass custom time to module
-	MockClock clock;
+TEST_F(TimeSynchronizatorTest, testTimeStructureThenMakeString) {
+	//creates some custom time data
 	TimeStructure customTime = {
 		.year = 1996,
 		.month = 12,
@@ -126,14 +129,17 @@ TEST_F(TimeSynchronizatorTest, testTimeStructureThenMakeString)
 		.uSec = 14052
 	};
 
-	TimeSynchronizator obj(clock);
-
-	//making clock return custom time
+	//created mockClock and set return custom time
+	MockClock clock;
 	EXPECT_CALL(clock, getTime(testing::_))
 		.WillOnce(testing::Invoke([&customTime](TimeStructure& time) {
 		time = customTime;
 			}));
 
+	//created main object
+	TimeSynchronizator obj(clock);
+
+	//updates TimeStructure inside TimeSynchonizator with MockClock values
 	obj.updateTime();
 
 	EXPECT_EQ(obj.getTime(), "1996-12-08 18:00:08.014052");
@@ -145,8 +151,7 @@ TEST_F(TimeSynchronizatorTest, testTimeStructureThenMakeString)
 //the result time should be in this case arithmetic average form 2 time values
 TEST_F(TimeSynchronizatorTest, test2ModulesInOneMachine)
 {
-	//set up custom MockClocks and time values for programs
-	MockClock clock1,clock2;
+	//set up custom MockClocks time values for programs
 	TimeStructure customTime1 = {
 		.year = 2025,
 		.month = 6,
@@ -165,6 +170,9 @@ TEST_F(TimeSynchronizatorTest, test2ModulesInOneMachine)
 		.sec = 3,
 		.uSec = 95
 	};
+
+	//created MockClocks and set return their custom time
+	MockClock clock1, clock2;
 	EXPECT_CALL(clock1, getTime(testing::_))
 		.WillOnce(testing::Invoke([&customTime1](TimeStructure& time) {
 		time = customTime1;
@@ -181,6 +189,7 @@ TEST_F(TimeSynchronizatorTest, test2ModulesInOneMachine)
 	std::string pathToAdressesFileProgram1 = "";
 	std::string pathToAdressesFileProgram2 = "";
 
+	//created 2 main programs with MockClocks and paths to files with adress to second program socket
 	TimeSynchronizator program1(clock1, pathToAdressesFileProgram1);
 	TimeSynchronizator program2(clock2, pathToAdressesFileProgram2);
 
