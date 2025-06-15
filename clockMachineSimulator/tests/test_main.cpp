@@ -59,7 +59,7 @@ TEST_F(TimeSynchronizatorTest, testMakingTimeString) {
 	};
 
 	//converts data from TimeStructure to string
-	TimeStructureStringConverter converter;
+	TimeConverter converter;
 	std::string timeString = converter.timeToString(customTime);
 
 	EXPECT_EQ(timeString, "2025-04-05 20:21:29.000098");
@@ -79,7 +79,7 @@ TEST_F(TimeSynchronizatorTest, testStringToTimeStructure) {
 	};
 
 	//converts data from string to TimeStructure
-	TimeStructureStringConverter converter;
+	TimeConverter converter;
 	TimeStructure timeConverted = converter.stringToTime(timeString);
 
 	EXPECT_EQ(time, timeConverted);
@@ -98,7 +98,7 @@ TEST_F(TimeSynchronizatorTest, testTimeStructureToStringToTimeStructure) {
 	};
 
 	//converts data from TimeStructure to string and then back to TimeStructure
-	TimeStructureStringConverter converter;
+	TimeConverter converter;
 	std::string timeString = converter.timeToString(time);
 	TimeStructure timeAfterConvertion = converter.stringToTime(timeString);
 
@@ -110,7 +110,7 @@ TEST_F(TimeSynchronizatorTest, testTimeStringToTimeStructureToTimeString) {
 	std::string timeString = "5020-32-83 27:66:70.009041";
 
 	//converts data from string to TimeStructure and then back to string
-	TimeStructureStringConverter converter;
+	TimeConverter converter;
 	TimeStructure time = converter.stringToTime(timeString);
 	std::string timeStringAfterConvertion = converter.timeToString(time);
 

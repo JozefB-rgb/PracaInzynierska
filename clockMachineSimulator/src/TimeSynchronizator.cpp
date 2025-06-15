@@ -6,14 +6,14 @@
 
 //for printhing to console during project Testing
 inline void PrintTo(TimeStructure& time, std::ostream* os) {
-	TimeStructureStringConverter converter;
+	TimeConverter converter;
 	*os << converter.timeToString(time);
 };
 
-//class TimeStructureStringConverter
+//class TimeConverter
 //connvets time data to TimeStructure or to String
-TimeStructureStringConverter::TimeStructureStringConverter() { ; }
-std::string TimeStructureStringConverter::timeToString(TimeStructure& time)
+TimeConverter::TimeConverter() { ; }
+std::string TimeConverter::timeToString(TimeStructure& time)
 {
 	std::ostringstream oss;
 
@@ -28,7 +28,7 @@ std::string TimeStructureStringConverter::timeToString(TimeStructure& time)
 	std::string result = oss.str();
 	return result;
 }
-TimeStructure TimeStructureStringConverter::stringToTime(std::string stringTime) {
+TimeStructure TimeConverter::stringToTime(std::string stringTime) {
 	//stringTime format: "0000-00-00 00:00:00.000000"
 	TimeStructure customTime = {
 		.year = stoi(stringTime.substr(0,4)),
@@ -41,7 +41,7 @@ TimeStructure TimeStructureStringConverter::stringToTime(std::string stringTime)
 	};
 	return customTime;
 }
-//~class TimeStructureStringConverter
+//~class TimeConverter
 
 
 //class TimeSynchronizator

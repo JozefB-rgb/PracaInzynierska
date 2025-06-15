@@ -49,10 +49,10 @@ public:
 };
 
 //connvets time data to TimeStructure or to String
-class TimeStructureStringConverter
+class TimeConverter
 {
 public:
-	TimeStructureStringConverter();
+	TimeConverter();
 	std::string timeToString(TimeStructure& time);
 	TimeStructure stringToTime(std::string stringTime);
 };
@@ -65,7 +65,7 @@ class TimeSynchronizator {
 
 	TimeStructure time_;
 	IClock& timeSource_;
-	TimeStructureStringConverter converter_;
+	TimeConverter converter_;
 	std::string pathToAdressesFile_;
 
 public:
