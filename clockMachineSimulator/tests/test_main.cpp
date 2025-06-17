@@ -5,6 +5,7 @@
 #include <string>
 
 #include "TimeSynchronizator.h"
+#include "IPStructures.h"
 
 class TimeSynchronizatorTest :public ::testing::Test
 {
@@ -172,13 +173,13 @@ TEST_F(TimeSynchronizatorTest, testLoadingIPFromFileProcess) {
 	EXPECT_EQ(ownPort.get(), ownPortFromFile.get());
 
 	//checks if firstDevice form test and form file match
-	EXPECT_EQ(firstDevice,remoteDevices.getDevice(0))
+	EXPECT_EQ(firstDevice, remoteDevices.getDevice(0));
 
 	//checks if secondDevice IP from test match second IP from file
-	EXPECT_EQ(secondDevice.IP, remoteDevices.getIP(1))
+	EXPECT_EQ(secondDevice.IP, remoteDevices.getIP(1));
 
 	//checks if thirdDevice port from test match third port from file
-	EXPECT_EQ(thirdDevice.port,remoteDevices.getPort(2))
+	EXPECT_EQ(thirdDevice.port, remoteDevices.getPort(2));
 }
 
 //test almost the whole module

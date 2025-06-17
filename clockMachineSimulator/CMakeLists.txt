@@ -13,7 +13,7 @@ if(NOT GTest_FOUND)
 endif()
 include_directories(${GTEST_INCLUDE_DIRS} src/)
 
-add_executable(testClockMachineSimulator tests/test_main.cpp src/TimeSynchronizator.h src/TimeSynchronizator.cpp)
+add_executable(testClockMachineSimulator tests/test_main.cpp src/TimeSynchronizator.h src/TimeSynchronizator.cpp src/IPStructures.h src/IPStructures.cpp)
 
 #enables google::test
 target_link_libraries(testClockMachineSimulator GTest::GTest GTest::Main)
