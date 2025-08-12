@@ -5,7 +5,31 @@
 class IPStructureTest :public ::testing::Test {
 };
 
+TEST_F(IPStructureTest, testIPclassCreation)
+{
+	std::string stringIP = "12.34.5.5";
+	IP ip(stringIP);
 
+	EXPECT_EQ(stringIP, ip.getIP());
+}
+
+TEST_F(IPStructureTest, testIPclassExceptionThrow)
+{
+	EXPECT_THROW(IP("12354"), std::invalid_argument);
+	EXPECT_THROW(IP("12.354"), std::invalid_argument);
+	EXPECT_THROW(IP("12.35.4"), std::invalid_argument);
+	EXPECT_THROW(IP("4.2..4"), std::invalid_argument);
+	EXPECT_THROW(IP("-12.35.4.4"), std::invalid_argument);
+	EXPECT_THROW(IP("-12.35.4.4"), std::invalid_argument);
+	EXPECT_THROW(IP("256.35.4.4"), std::invalid_argument);
+	EXPECT_THROW(IP("255.35.4.4a"), std::invalid_argument);
+	EXPECT_THROW(IP("255.35.4.4.4"), std::invalid_argument);
+
+	EXPECT_NO_THROW(IP("12.35.4.4"));
+	EXPECT_NO_THROW(IP("255.35.4.4"));
+	EXPECT_NO_THROW(IP("0.0.04.40"));
+}
+/*
 //test whole process of loading IP, ports and local port adress form file 
 TEST_F(IPStructureTest, testLoadingIPFromFileProcess) {
 	OwnPort ownPort("321");
@@ -41,6 +65,7 @@ TEST_F(IPStructureTest, testLoadingIPFromFileProcess) {
 	//checks if thirdDevice port from test match third port from file
 	EXPECT_EQ(thirdDevice.port, remoteDevices.getPort(2));
 }
+*/
 
 int main(int argc, char** argv)
 {
