@@ -1,9 +1,10 @@
 #include "IPStructures.h"
 
+/*
 //for printhing to console during project Testing
 inline void PrintTo(AdressStructure& device, std::ostream* os) {
 	*os << "Device IP: " << device.IP << ", port: " << device.port;
-};
+};*/
 
 //class OwnPort
 OwnPort::OwnPort() : port_(NULL) {};
@@ -56,6 +57,48 @@ std::string Port::checkPort(std::string port)
 	return port;
 }
 
+//class AdressStructure
+AdressStructure::AdressStructure(std::string ip, std::initializer_list<std::string> ports) : ip_(IP(ip))
+{
+	for (const std::string& port : ports)
+	{
+		try
+		{
+			ports_.emplace_back(Port(port));
+		}
+		catch (const std::invalid_argument& e)
+		{
+			std::cerr << "Port value " << port << " is invalid \n";
+		}
+	}
+}
+AdressStructure::AdressStructure(std::string ip, std::vector<std::string> ports) : ip_(IP(ip))
+{
+	for (const std::string& port : ports)
+	{
+		try
+		{
+			ports_.emplace_back(Port(port));
+		}
+		catch (const std::invalid_argument& e)
+		{
+			std::cerr << "Port value " << port << " is invalid \n";
+		}
+	}
+}
+void AdressStructure::addPort(std::string port)
+{ 
+	try
+	{
+		ports_.emplace_back(Port(port));
+	}
+	catch (std::invalid_argument& e)
+	{
+		std::cerr << "Port value " << port << " is invalid \n";
+	}
+}
+
+/*
 //class RemoteDeviceList
 AdressStructure RemoteDeviceList::getDevice(int pos) { return devices_.at(pos); };
 std::string RemoteDeviceList::getIP(int pos) { return devices_.at(pos).IP; };
@@ -64,4 +107,4 @@ std::string RemoteDeviceList::getPort(int pos) { return devices_.at(pos).port; }
 //class IPFileReader
 void IPFileReader::loadAdresses(std::string path, RemoteDeviceList& remoteDevices, OwnPort& ownPort) {
 	;
-};
+};*/

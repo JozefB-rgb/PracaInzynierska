@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <iostream>
 #include <sstream>
+#include <initializer_list>
 
 class OwnPort {
 	std::string port_;
@@ -37,17 +38,25 @@ public:
 	const std::string& getPort() const { return port_; };
 };
 
-struct AdressStructure {
-	std::string IP;
-	std::string port;
-
-	bool operator==(const AdressStructure& other) const{
+class AdressStructure {
+	IP ip_;
+	std::vector<Port> ports_;
+	
+public:
+	AdressStructure(std::string ip, std::initializer_list<std::string> ports);
+	AdressStructure(std::string ip, std::vector<std::string> ports);
+	void addPort(std::string port);
+	const std::string getIP() { return ip_.getIP(); };
+	const std::string getPort() { return ports_.at(0).getPort(); };
+	const std::string getPort(int pos) { return ports_.at(pos).getPort(); };
+	/*bool operator==(const AdressStructure& other) const {
 		return IP == other.IP && port == other.port;
-	}
+	}*/
 };
 //for printhing to console during project Testing
-inline void PrintTo(AdressStructure& device, std::ostream* os);
+//inline void PrintTo(AdressStructure& device, std::ostream* os);
 
+/*
 class RemoteDeviceList {
 	std::vector<AdressStructure> devices_;
 
@@ -61,5 +70,5 @@ class IPFileReader {
 public:
 	void loadAdresses(std::string path, RemoteDeviceList& remoteDevices, OwnPort& ownPort);
 };
-
+*/
 #endif // !IP_STRUCTURES_H
