@@ -27,6 +27,16 @@ public:
 	const std::string& getIP() const { return ip_; };
 };
 
+class Port
+{
+	std::string port_;
+
+	std::string checkPort(std::string port);
+public:
+	Port(const std::string& port) : port_(checkPort(port)) {}
+	const std::string& getPort() const { return port_; };
+};
+
 struct AdressStructure {
 	std::string IP;
 	std::string port;

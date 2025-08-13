@@ -30,9 +30,9 @@ std::string IP::checkIP(std::string ip)
 		else
 			ipBlock = ip.substr(prevoiusDotPossition + 1, dotPossition - prevoiusDotPossition - 1);
 		{
-			size_t pos;
-			i_ipBlock = std::stoi(ipBlock, &pos);
-			if (pos != ipBlock.size())
+			size_t len;
+			i_ipBlock = std::stoi(ipBlock, &len);
+			if (len != ipBlock.size())
 				throw std::invalid_argument("Not only digits inside IP");
 		}
 		if (!(0 <= i_ipBlock && i_ipBlock <= 255))
@@ -40,6 +40,20 @@ std::string IP::checkIP(std::string ip)
 		prevoiusDotPossition = dotPossition;
 	}
 	return ip;
+}
+
+//class Port
+std::string Port::checkPort(std::string port)
+{
+	int i_port;
+	size_t len;
+
+	i_port = stoi(port, &len);
+	if (len != port.size())
+		throw std::invalid_argument("Not only digits inside Port");
+	if (i_port < 1024 || 49151 < i_port)
+		throw std::invalid_argument("Port out of expected range <1024...49151>");
+	return port;
 }
 
 //class RemoteDeviceList

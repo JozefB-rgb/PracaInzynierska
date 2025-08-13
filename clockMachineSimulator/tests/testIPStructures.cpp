@@ -20,14 +20,38 @@ TEST_F(IPStructureTest, testIPclassExceptionThrow)
 	EXPECT_THROW(IP("12.35.4"), std::invalid_argument);
 	EXPECT_THROW(IP("4.2..4"), std::invalid_argument);
 	EXPECT_THROW(IP("-12.35.4.4"), std::invalid_argument);
-	EXPECT_THROW(IP("-12.35.4.4"), std::invalid_argument);
 	EXPECT_THROW(IP("256.35.4.4"), std::invalid_argument);
 	EXPECT_THROW(IP("255.35.4.4a"), std::invalid_argument);
 	EXPECT_THROW(IP("255.35.4.4.4"), std::invalid_argument);
+	EXPECT_THROW(IP("1000.35.4.4"), std::invalid_argument);
 
 	EXPECT_NO_THROW(IP("12.35.4.4"));
 	EXPECT_NO_THROW(IP("255.35.4.4"));
 	EXPECT_NO_THROW(IP("0.0.04.40"));
+}
+
+TEST_F(IPStructureTest, testPortClassCreation)
+{
+	std::string stringPort = "12345";
+	Port port(stringPort);
+
+	EXPECT_EQ(port.getPort(), stringPort);
+}
+
+TEST_F(IPStructureTest, testPortClassExceptionsThrow)
+{
+	EXPECT_THROW(Port(""), std::invalid_argument);
+	EXPECT_THROW(Port("0"), std::invalid_argument);
+	EXPECT_THROW(Port("1023"), std::invalid_argument);
+	EXPECT_THROW(Port("49152"), std::invalid_argument);
+	EXPECT_THROW(Port("2000."), std::invalid_argument);
+	EXPECT_THROW(Port("2000a"), std::invalid_argument);
+	EXPECT_THROW(Port("FFF"), std::invalid_argument);
+	EXPECT_THROW(Port("-2000"), std::invalid_argument);
+
+	EXPECT_NO_THROW(Port("1024"));
+	EXPECT_NO_THROW(Port("49151"));
+	EXPECT_NO_THROW(Port("2000"));
 }
 /*
 //test whole process of loading IP, ports and local port adress form file 
