@@ -1,6 +1,6 @@
-#ifndef TIME_SYNCHRONIZATOR_H
+#ifndef DATA_STRUCTURE_H
 
-#define TIME_SYNCHRONIZATOR_H
+#define DATA_STRUCTURE_H
 
 #include <gmock/gmock.h>
 #include <iomanip>
@@ -58,7 +58,7 @@ public:
 };
 
 
-class TimeSynchronizator {
+class DataStructure {
 	bool severRunning_ = false;
 	bool connectedToAll_ = false;
 	bool timeSynchronized_ = false;
@@ -69,8 +69,8 @@ class TimeSynchronizator {
 	std::string pathToAdressesFile_;
 
 public:
-	TimeSynchronizator(IClock& timeSource);
-	TimeSynchronizator(IClock& timeSource, std::string pathToAdressesFile);
+	DataStructure(IClock& timeSource);
+	DataStructure(IClock& timeSource, std::string pathToAdressesFile);
 
 	bool settingUp();
 	bool waitingForConnection();
@@ -92,5 +92,5 @@ public:
 };
 
 
-#endif // !TIME_SYNCHRONIZATOR_H
+#endif //DATA_STRUCTURE_H
 

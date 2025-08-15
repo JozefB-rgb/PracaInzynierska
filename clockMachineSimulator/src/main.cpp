@@ -1,5 +1,5 @@
 #include <iostream>
-#include "TimeSynchronizator.h"
+#include "DataStructure.h"
 
 int main()
 {

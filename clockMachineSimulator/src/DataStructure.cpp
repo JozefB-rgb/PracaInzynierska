@@ -1,4 +1,4 @@
-#include "TimeSynchronizator.h"
+#include "DataStructure.h"
 
 #include <iomanip>
 #include <iostream>
@@ -44,29 +44,29 @@ TimeStructure TimeConverter::stringToTime(std::string stringTime) {
 //~class TimeConverter
 
 
-//class TimeSynchronizator
-TimeSynchronizator::TimeSynchronizator(IClock& timeSource) : timeSource_(timeSource) {}
-TimeSynchronizator::TimeSynchronizator(IClock& timeSource, std::string pathToAdressesFile) : timeSource_(timeSource), pathToAdressesFile_(pathToAdressesFile) {}
+//class DataStructure
+DataStructure::DataStructure(IClock& timeSource) : timeSource_(timeSource) {}
+DataStructure::DataStructure(IClock& timeSource, std::string pathToAdressesFile) : timeSource_(timeSource), pathToAdressesFile_(pathToAdressesFile) {}
 
-bool TimeSynchronizator::settingUp() {
+bool DataStructure::settingUp() {
 	if (severRunning_) return true;
 	else return false;
 }
-bool TimeSynchronizator::waitingForConnection() {
+bool DataStructure::waitingForConnection() {
 	if (connectedToAll_) return false;
 	else return true;
 }
-bool TimeSynchronizator::isSynchronized() { return timeSynchronized_; };
+bool DataStructure::isSynchronized() { return timeSynchronized_; };
 
-void TimeSynchronizator::updateTime() { timeSource_.getTime(time_); };
-void TimeSynchronizator::synchronizeTime() { ; };
+void DataStructure::updateTime() { timeSource_.getTime(time_); };
+void DataStructure::synchronizeTime() { ; };
 
-int TimeSynchronizator::getYear() { return time_.year; };
-int TimeSynchronizator::getMonth() { return time_.month; };
-int TimeSynchronizator::getDay() { return time_.day; };
-int TimeSynchronizator::getHour() { return time_.hour; };
-int TimeSynchronizator::getMin() { return time_.min; };
-int TimeSynchronizator::getSec() { return time_.sec; };
-int TimeSynchronizator::getuSec() { return time_.uSec; };
-std::string TimeSynchronizator::getTime() { return converter_.timeToString(time_); }
-//~class TimeSynchronizator
+int DataStructure::getYear() { return time_.year; };
+int DataStructure::getMonth() { return time_.month; };
+int DataStructure::getDay() { return time_.day; };
+int DataStructure::getHour() { return time_.hour; };
+int DataStructure::getMin() { return time_.min; };
+int DataStructure::getSec() { return time_.sec; };
+int DataStructure::getuSec() { return time_.uSec; };
+std::string DataStructure::getTime() { return converter_.timeToString(time_); }
+//~class DataStructure

@@ -4,14 +4,14 @@
 #include <iostream>
 #include <string>
 
-#include "TimeSynchronizator.h"
+#include "DataStructure.h"
 
-class TimeSynchronizatorTest :public ::testing::Test
+class DataStructureTest :public ::testing::Test
 {
 };
 
 
-TEST_F(TimeSynchronizatorTest, testDataStructure) {
+TEST_F(DataStructureTest, testDataStructure) {
 	//creates some custom time data
 	TimeStructure customTime = {
 		.year = 2025,
@@ -31,7 +31,7 @@ TEST_F(TimeSynchronizatorTest, testDataStructure) {
 			}));
 
 	//created main object
-	TimeSynchronizator obj(clock);
+	DataStructure obj(clock);
 
 	//updates TimeStructure inside TimeSynchonizator with MockClock values
 	obj.updateTime();
@@ -46,7 +46,7 @@ TEST_F(TimeSynchronizatorTest, testDataStructure) {
 
 }
 
-TEST_F(TimeSynchronizatorTest, testMakingTimeString) {
+TEST_F(DataStructureTest, testMakingTimeString) {
 	//creates some custom time data
 	TimeStructure customTime = {
 		.year = 2025,
@@ -65,7 +65,7 @@ TEST_F(TimeSynchronizatorTest, testMakingTimeString) {
 	EXPECT_EQ(timeString, "2025-04-05 20:21:29.000098");
 }
 
-TEST_F(TimeSynchronizatorTest, testStringToTimeStructure) {
+TEST_F(DataStructureTest, testStringToTimeStructure) {
 	//creates some custom time data
 	std::string timeString = "1997-11-07 04:12:09.005310";
 	TimeStructure time = {
@@ -85,7 +85,7 @@ TEST_F(TimeSynchronizatorTest, testStringToTimeStructure) {
 	EXPECT_EQ(time, timeConverted);
 }
 
-TEST_F(TimeSynchronizatorTest, testTimeStructureToStringToTimeStructure) {
+TEST_F(DataStructureTest, testTimeStructureToStringToTimeStructure) {
 	//creates some custom time data
 	TimeStructure time = {
 		.year = 925,
@@ -105,7 +105,7 @@ TEST_F(TimeSynchronizatorTest, testTimeStructureToStringToTimeStructure) {
 	EXPECT_EQ(time, timeAfterConvertion);
 }
 
-TEST_F(TimeSynchronizatorTest, testTimeStringToTimeStructureToTimeString) {
+TEST_F(DataStructureTest, testTimeStringToTimeStructureToTimeString) {
 	//creates some custom time data
 	std::string timeString = "5020-32-83 27:66:70.009041";
 
@@ -117,7 +117,7 @@ TEST_F(TimeSynchronizatorTest, testTimeStringToTimeStructureToTimeString) {
 	EXPECT_EQ(timeString, timeStringAfterConvertion);
 }
 
-TEST_F(TimeSynchronizatorTest, testTimeStructureThenMakeString) {
+TEST_F(DataStructureTest, testTimeStructureThenMakeString) {
 	//creates some custom time data
 	TimeStructure customTime = {
 		.year = 1996,
@@ -137,7 +137,7 @@ TEST_F(TimeSynchronizatorTest, testTimeStructureThenMakeString) {
 			}));
 
 	//created main object
-	TimeSynchronizator obj(clock);
+	DataStructure obj(clock);
 
 	//updates TimeStructure inside TimeSynchonizator with MockClock values
 	obj.updateTime();
@@ -149,7 +149,7 @@ TEST_F(TimeSynchronizatorTest, testTimeStructureThenMakeString) {
 //creates 2 intances on the same decice, connects them to each other,
 //then each one sending its time to other,
 //the result time should be in this case arithmetic average form 2 time values
-TEST_F(TimeSynchronizatorTest, test2ModulesInOneMachine)
+TEST_F(DataStructureTest, test2ModulesInOneMachine)
 {
 	//set up custom MockClocks time values for programs
 	TimeStructure customTime1 = {
@@ -190,8 +190,8 @@ TEST_F(TimeSynchronizatorTest, test2ModulesInOneMachine)
 	std::string pathToAdressesFileProgram2 = "";
 
 	//created 2 main programs with MockClocks and paths to files with adress to second program socket
-	TimeSynchronizator program1(clock1, pathToAdressesFileProgram1);
-	TimeSynchronizator program2(clock2, pathToAdressesFileProgram2);
+	DataStructure program1(clock1, pathToAdressesFileProgram1);
+	DataStructure program2(clock2, pathToAdressesFileProgram2);
 
 	//wait till the servers sets up 
 	int maxSetUptimeOut = 10;	//ms
