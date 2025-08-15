@@ -56,19 +56,21 @@ public:
 //for printhing to console during project Testing
 //inline void PrintTo(AdressStructure& device, std::ostream* os);
 
-/*
-class RemoteDeviceList {
+
+class RemoteDevices {
 	std::vector<AdressStructure> devices_;
 
 public:
-	AdressStructure getDevice(int pos);
-	std::string getIP(int pos);
-	std::string getPort(int pos);
+	RemoteDevices() { ; };
+	void addDevice(AdressStructure device);
+	const std::string getIP(int device);
+	const std::string getPort(int device);
+	const std::string getPort(int device, int port);
 };
-
+/*
 class IPFileReader {
 public:
 	void loadAdresses(std::string path, RemoteDeviceList& remoteDevices, OwnPort& ownPort);
-};
-*/
+};*/
+
 #endif // !IP_STRUCTURES_H

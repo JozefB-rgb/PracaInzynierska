@@ -98,6 +98,12 @@ void AdressStructure::addPort(std::string port)
 	}
 }
 
+
+//RemoteDevices
+void RemoteDevices::addDevice(AdressStructure device) { devices_.emplace_back(device); }
+const std::string RemoteDevices::getIP(int device) { return devices_.at(device).getIP(); }
+const std::string RemoteDevices::getPort(int device) { return devices_.at(device).getPort(0); }
+const std::string RemoteDevices::getPort(int device, int port) { return devices_.at(device).getPort(port); }
 /*
 //class RemoteDeviceList
 AdressStructure RemoteDeviceList::getDevice(int pos) { return devices_.at(pos); };

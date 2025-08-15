@@ -74,22 +74,34 @@ TEST_F(IPStructureTest, testAdressStructureCreation)
 	EXPECT_EQ(adressStructure2.getIP(), stringIP);
 	EXPECT_EQ(adressStructure2.getPort(0), stringPorts.at(0));
 }
+
+TEST_F(IPStructureTest, testRemoteDevicesClass)
+{
+	RemoteDevices remoteDevices;
+	AdressStructure device_0("001.001.001.001", { "12345" });
+	AdressStructure device_1("0.0.0.1", { "10000", "10001"});
+	AdressStructure device_2("0.0.0.0", {"0" , "12345"});
+	remoteDevices.addDevice(device_0);
+	remoteDevices.addDevice(device_1);
+	remoteDevices.addDevice(device_2);
+
+	EXPECT_EQ(remoteDevices.getIP(0), device_0.getIP());
+	EXPECT_EQ(remoteDevices.getPort(0), device_0.getPort());
+	EXPECT_EQ(remoteDevices.getPort(0,0), device_0.getPort(0));
+	EXPECT_EQ(remoteDevices.getIP(1), device_1.getIP());
+	EXPECT_EQ(remoteDevices.getPort(1,0), device_1.getPort(0));
+	EXPECT_EQ(remoteDevices.getPort(1,1), device_1.getPort(1));
+	EXPECT_EQ(remoteDevices.getIP(2), device_2.getIP());
+	EXPECT_EQ(remoteDevices.getPort(2,0), device_2.getPort(0));	//"12345" due to "0" not valid port
+	EXPECT_THROW(remoteDevices.getPort(2, 1), std::out_of_range);
+}
 /*
 //test whole process of loading IP, ports and local port adress form file 
 TEST_F(IPStructureTest, testLoadingIPFromFileProcess) {
 	OwnPort ownPort("321");
-	AdressStructure firstDevice = {
-		.IP = "195.128.0.1",
-		.port = "8008"
-	};
-	AdressStructure secondDevice = {
-		.IP = "295.128.0.1",
-		.port = "12024"
-	};
-	AdressStructure thirdDevice = {
-		.IP = "5.1523.42.1",
-		.port = "12024"
-	};
+	AdressStructure firstDevice("195.128.0.1", { "8008" });
+	AdressStructure secondDevice("245.128.0.1", { "12024", "15", "2020"});
+	AdressStructure thirdDevice("5.123.42.1", { "2024", "4050"});
 
 	//loading IP and ports of remote devices from file to adress structure
 	std::string IPFilePath = "";
@@ -109,8 +121,8 @@ TEST_F(IPStructureTest, testLoadingIPFromFileProcess) {
 
 	//checks if thirdDevice port from test match third port from file
 	EXPECT_EQ(thirdDevice.port, remoteDevices.getPort(2));
-}
-*/
+}*/
+
 
 int main(int argc, char** argv)
 {
