@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 //#include <gmock/gmock.h>
 
-#include "FileReader.h"
+#include "AdressFormFileLoader.h"
 #include "IPStructures.h"
 
 class FileReaderTest :public ::testing::Test {

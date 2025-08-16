@@ -19,7 +19,7 @@ target_link_libraries(testDataStructure GTest::GTest GTest::Main gmock gmock_mai
 add_executable(testIPStructures "tests/testIPStructures.cpp" "src/IPStructures.h" "src/IPStructures.cpp")
 target_link_libraries(testIPStructures GTest::GTest GTest::Main)
 
-add_executable(testFileReader "tests/testFileReader.cpp" "src/FileReader.h" "src/FileReader.cpp" "src/IPStructures.h" "src/IPStructures.cpp")
+add_executable(testFileReader "tests/AdressFormFileLoader.cpp" "src/AdressFormFileLoader.h" "src/AdressFormFileLoader.cpp" "src/IPStructures.h" "src/IPStructures.cpp")
 target_link_libraries(testFileReader GTest::GTest GTest::Main gmock gmock_main)
 
 add_test(NAME DataStructure COMMAND testClockMachineSimulator)
