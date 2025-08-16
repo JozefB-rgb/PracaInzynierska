@@ -4,6 +4,7 @@
 #include <gmock/gmock.h>
 #include <string.h>
 #include <exception>
+#include <fstream>
 #include "IPStructures.h"
 
 class EndOfFileException :public ::std::exception
@@ -26,13 +27,10 @@ public:
 
 class FileReader :public ::IFileReader
 {
+	std::ifstream adressFile_;
 public:
-	FileReader() { ; };
-	FileReader(std::string filePath) { ; };		//should Open File
-	std::string readLine() {
-		return ("");
-	}
-	~FileReader() { ; };						//shoudld close FIle
+	FileReader(const std::string& filePath);
+	std::string readLine();
 };
 
 class MockFileReader :public ::IFileReader

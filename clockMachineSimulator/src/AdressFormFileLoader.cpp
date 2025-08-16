@@ -1,5 +1,19 @@
 #include "AdressFormFileLoader.h"
 
+//FileReader
+FileReader::FileReader(const std::string& filePath) : adressFile_(filePath)
+{
+	if (!adressFile_.is_open())
+		throw std::runtime_error("Cannot open file with path " + filePath + "\n");
+};
+std::string FileReader::readLine()
+{
+	std::string line;
+	if (std::getline(adressFile_, line))
+		return line;
+	throw EndOfFileException("File ended");
+}
+
 //AdressFormFileLoader
 void AdressFormFileLoader::loadData()
 {

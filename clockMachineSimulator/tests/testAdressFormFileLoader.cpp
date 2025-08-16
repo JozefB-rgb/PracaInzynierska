@@ -7,10 +7,6 @@
 class AdressFormFileLoaderTest :public ::testing::Test {
 };
 
-TEST_F(AdressFormFileLoaderTest, testFileReaderCreation)
-{
-	EXPECT_NO_THROW(FileReader());
-}
 
 TEST_F(AdressFormFileLoaderTest, testMockReadLine)
 {
@@ -23,6 +19,7 @@ TEST_F(AdressFormFileLoaderTest, testMockReadLine)
 	EXPECT_EQ(fileReader.readLine(), expectedLine);
 }
 
+#include <filesystem>
 TEST_F(AdressFormFileLoaderTest, testCreatingDevicesListWithDataFromMockFileReader)
 {
 	MockFileReader fileReader;
@@ -42,6 +39,30 @@ TEST_F(AdressFormFileLoaderTest, testCreatingDevicesListWithDataFromMockFileRead
 	EXPECT_EQ(remoteDevices.getIP(1), "255.255.255.255");
 	EXPECT_EQ(remoteDevices.getPort(1, 0), "2000");
 	EXPECT_EQ(remoteDevices.getPort(1, 1), "2001"); //port "0" skipped due to out of expected value, "15" also skipped
+}
+
+TEST_F(AdressFormFileLoaderTest, testIfRealFileReaderThrowsExceptionIfFileDoesntExist)
+{
+	const std::string filePath = "wrong path";
+	EXPECT_THROW(FileReader{ filePath }, std::runtime_error);
+}
+
+TEST_F(AdressFormFileLoaderTest, testLoadRealDataFromFile)
+{
+	std::string filePath = "../../../../clockMachineSimulator/testFiles/remoteDevices.csv";
+	FileReader fileReader(filePath);
+	RemoteDevices remoteDevices;
+	AdressFormFileLoader dataLoader(fileReader, remoteDevices);
+
+	dataLoader.loadData();
+
+	EXPECT_EQ(remoteDevices.getIP(0), "001.001.002.3");
+	EXPECT_EQ(remoteDevices.getPort(0, 0), "12345");
+	EXPECT_EQ(remoteDevices.getPort(0, 1), "3333");
+	EXPECT_EQ(remoteDevices.getIP(1), "0.0.0.5");
+	EXPECT_EQ(remoteDevices.getPort(1, 0), "5000");
+	EXPECT_EQ(remoteDevices.getIP(2), "1.2.3.4");
+	EXPECT_EQ(remoteDevices.getPort(2), "4000");
 }
 
 int main(int argc, char** argv)
