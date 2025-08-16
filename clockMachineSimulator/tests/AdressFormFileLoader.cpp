@@ -4,15 +4,15 @@
 #include "AdressFormFileLoader.h"
 #include "IPStructures.h"
 
-class FileReaderTest :public ::testing::Test {
+class AdressFormFileLoaderTest :public ::testing::Test {
 };
 
-TEST_F(FileReaderTest, testFileReaderCreation)
+TEST_F(AdressFormFileLoaderTest, testFileReaderCreation)
 {
 	EXPECT_NO_THROW(FileReader());
 }
 
-TEST_F(FileReaderTest, testMockReadLine)
+TEST_F(AdressFormFileLoaderTest, testMockReadLine)
 {
 	MockFileReader fileReader;
 	std::string expectedLine = "0.0.0.1,12345";
@@ -23,7 +23,7 @@ TEST_F(FileReaderTest, testMockReadLine)
 	EXPECT_EQ(fileReader.readLine(), expectedLine);
 }
 
-TEST_F(FileReaderTest, testCreatingDevicesListWithDataFromMockFileReader)
+TEST_F(AdressFormFileLoaderTest, testCreatingDevicesListWithDataFromMockFileReader)
 {
 	MockFileReader fileReader;
 	RemoteDevices remoteDevices;
