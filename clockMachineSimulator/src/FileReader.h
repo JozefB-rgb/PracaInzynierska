@@ -3,6 +3,19 @@
 
 #include <gmock/gmock.h>
 #include <string.h>
+#include <exception>
+#include "IPStructures.h"
+
+class EndOfFileException :public ::std::exception
+{
+	const std::string msg_;
+public:
+	explicit EndOfFileException(const std::string msg) : msg_(msg) {}
+	const char* what() const noexcept override
+	{
+		return msg_.c_str();
+	}
+};
 
 class IFileReader
 {
@@ -28,6 +41,15 @@ public:
 	MOCK_METHOD(std::string, readLine, (), (override));
 };
 
+class AdressFormFileLoader
+{
+	IFileReader& fileReader_;
+	RemoteDevices& remoteDevices_;
+
+public:
+	AdressFormFileLoader(IFileReader& fileReader, RemoteDevices& remoteDevices) : fileReader_(fileReader), remoteDevices_(remoteDevices) { ; };
+	void loadData();
+};
 
 
 #endif //FILE_READER_H
