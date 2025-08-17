@@ -44,8 +44,15 @@ void AdressFormFileLoader::loadData()
 					ports.emplace_back(stringCell);
 				prevoiusCommaPossition = commaPossition;
 			}
-			AdressStructure device(ip, ports);
-			remoteDevices_.addDevice(device);
+			try
+			{
+				AdressStructure device(ip, ports);
+				remoteDevices_.addDevice(device);
+			}
+			catch (std::invalid_argument& e)
+			{
+				std::cerr << e.what();
+			}
 			ports.clear();
 		}
 	}

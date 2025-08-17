@@ -25,7 +25,9 @@ std::string IP::checkIP(std::string ip)
 	{
 		dotPossition = ip.find(".", dotPossition + 1);
 		if ((dotPossition == std::string::npos && (block != 4)))
-			throw std::invalid_argument("IP is not ***.***.***.*** format");
+		{
+			throw std::invalid_argument("Invalid IP adress: " + ip + " Should be x.x.x.x with x form 0 to 255. ");
+		}
 		else if (block == 4)
 			ipBlock = ip.substr(prevoiusDotPossition + 1);
 		else
@@ -34,10 +36,10 @@ std::string IP::checkIP(std::string ip)
 			size_t len;
 			i_ipBlock = std::stoi(ipBlock, &len);
 			if (len != ipBlock.size())
-				throw std::invalid_argument("Not only digits inside IP");
+				throw std::invalid_argument("Not only digits inside IP: " + ip + " ");
 		}
 		if (!(0 <= i_ipBlock && i_ipBlock <= 255))
-			throw std::invalid_argument("Invalid Ip block");
+			throw std::invalid_argument("Invalid IP adress: " + ip + " Should be x.x.x.x with x form 0 to 255. ");
 		prevoiusDotPossition = dotPossition;
 	}
 	return ip;
@@ -49,11 +51,18 @@ std::string Port::checkPort(std::string port)
 	int i_port;
 	size_t len;
 
-	i_port = stoi(port, &len);
+	
+	try
+	{
+		i_port = stoi(port, &len);
+	}
+	catch (std::invalid_argument) {
+		throw std::invalid_argument("Stoi convertion failed: " + port + " ");
+	}
 	if (len != port.size())
-		throw std::invalid_argument("Not only digits inside Port");
+		throw std::invalid_argument("Not only digits inside Port: " + port + " ");
 	if (i_port < 1024 || 49151 < i_port)
-		throw std::invalid_argument("Port out of expected range <1024...49151>");
+		throw std::invalid_argument("Invalid port range: " + port + " Expected range from 1024 to 49151. ");
 	return port;
 }
 
@@ -68,7 +77,7 @@ AdressStructure::AdressStructure(std::string ip, std::initializer_list<std::stri
 		}
 		catch (const std::invalid_argument& e)
 		{
-			std::cerr << "Port value " << port << " is invalid \n";
+			std::cerr << e.what() << "\n";
 		}
 	}
 }
@@ -82,7 +91,7 @@ AdressStructure::AdressStructure(std::string ip, std::vector<std::string> ports)
 		}
 		catch (const std::invalid_argument& e)
 		{
-			std::cerr << "Port value " << port << " is invalid \n";
+			std::cerr << e.what() << "\n";
 		}
 	}
 }
@@ -94,7 +103,7 @@ void AdressStructure::addPort(std::string port)
 	}
 	catch (std::invalid_argument& e)
 	{
-		std::cerr << "Port value " << port << " is invalid \n";
+		std::cerr << e.what() << "\n";
 	}
 }
 
