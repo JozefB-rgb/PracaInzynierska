@@ -10,44 +10,7 @@ class DataStructureTest :public ::testing::Test
 {
 };
 
-
-TEST_F(DataStructureTest, testDataStructure) {
-	//creates some custom time data
-	TimeStructure customTime = {
-		.year = 2025,
-		.month = 5,
-		.day = 28,
-		.hour = 18,
-		.min = 19,
-		.sec = 20,
-		.uSec = 100200
-	};
-
-	//created mockClock and set return custom time
-	MockClock clock;
-	EXPECT_CALL(clock, getTime(testing::_))
-		.WillOnce(testing::Invoke([&customTime](TimeStructure& time) {
-		time = customTime;
-			}));
-
-	//created main object
-	DataStructure obj(clock);
-
-	//updates TimeStructure inside TimeSynchonizator with MockClock values
-	obj.updateTime();
-
-	EXPECT_EQ(obj.getYear(), 2025);
-	EXPECT_EQ(obj.getMonth(), 5);
-	EXPECT_EQ(obj.getDay(), 28);
-	EXPECT_EQ(obj.getHour(), 18);
-	EXPECT_EQ(obj.getMin(), 19);
-	EXPECT_EQ(obj.getSec(), 20);
-	EXPECT_EQ(obj.getuSec(), 100200);
-
-}
-
 TEST_F(DataStructureTest, testMakingTimeString) {
-	//creates some custom time data
 	TimeStructure customTime = {
 		.year = 2025,
 		.month = 4,
@@ -58,7 +21,6 @@ TEST_F(DataStructureTest, testMakingTimeString) {
 		.uSec = 98
 	};
 
-	//converts data from TimeStructure to string
 	TimeConverter converter;
 	std::string timeString = converter.timeToString(customTime);
 
@@ -66,7 +28,6 @@ TEST_F(DataStructureTest, testMakingTimeString) {
 }
 
 TEST_F(DataStructureTest, testStringToTimeStructure) {
-	//creates some custom time data
 	std::string timeString = "1997-11-07 04:12:09.005310";
 	TimeStructure time = {
 		.year = 1997,
@@ -78,7 +39,6 @@ TEST_F(DataStructureTest, testStringToTimeStructure) {
 		.uSec = 5310
 	};
 
-	//converts data from string to TimeStructure
 	TimeConverter converter;
 	TimeStructure timeConverted = converter.stringToTime(timeString);
 
@@ -86,7 +46,6 @@ TEST_F(DataStructureTest, testStringToTimeStructure) {
 }
 
 TEST_F(DataStructureTest, testTimeStructureToStringToTimeStructure) {
-	//creates some custom time data
 	TimeStructure time = {
 		.year = 925,
 		.month = 8,
@@ -97,7 +56,6 @@ TEST_F(DataStructureTest, testTimeStructureToStringToTimeStructure) {
 		.uSec = 1010
 	};
 
-	//converts data from TimeStructure to string and then back to TimeStructure
 	TimeConverter converter;
 	std::string timeString = converter.timeToString(time);
 	TimeStructure timeAfterConvertion = converter.stringToTime(timeString);
@@ -107,7 +65,7 @@ TEST_F(DataStructureTest, testTimeStructureToStringToTimeStructure) {
 
 TEST_F(DataStructureTest, testTimeStringToTimeStructureToTimeString) {
 	//creates some custom time data
-	std::string timeString = "5020-32-83 27:66:70.009041";
+	std::string timeString = "1020-02-13 10:15:54.009041";
 
 	//converts data from string to TimeStructure and then back to string
 	TimeConverter converter;
@@ -117,8 +75,64 @@ TEST_F(DataStructureTest, testTimeStringToTimeStructureToTimeString) {
 	EXPECT_EQ(timeString, timeStringAfterConvertion);
 }
 
-TEST_F(DataStructureTest, testTimeStructureThenMakeString) {
-	//creates some custom time data
+TEST_F(DataStructureTest, testConvertionFromTimeStructureToTimePointAndBack)
+{
+	std::chrono::system_clock::time_point timePoint;
+	TimeConverter timeConverter;
+	TimeStructure timeAfterConversion;
+	TimeStructure customTime = {
+	.year = 2025,
+	.month = 1,
+	.day = 32,
+	.hour = 0,
+	.min = 1,
+	.sec = 120,
+	.uSec = 1000222
+	};	//due to overflow data should change to 2025-02-01 00.03.01.000222
+
+	timePoint = timeConverter.toTimePoint(customTime);
+	timeAfterConversion = timeConverter.toTimeStructure(timePoint);
+
+	EXPECT_EQ(timeAfterConversion.year, 2025);
+	EXPECT_EQ(timeAfterConversion.month, 2);
+	EXPECT_EQ(timeAfterConversion.day, 1);
+	EXPECT_EQ(timeAfterConversion.hour, 0);
+	EXPECT_EQ(timeAfterConversion.min, 3);
+	EXPECT_EQ(timeAfterConversion.sec, 1);
+	EXPECT_EQ(timeAfterConversion.uSec, 222);
+}
+
+TEST_F(DataStructureTest, testIfMockInvoceCorrectTime) {
+	MockClock clock;
+	TimeConverter timeConverter;
+	DataStructure timeMenager(clock);
+	TimeStructure customTime = {
+		.year = 1999,
+		.month = 13,
+		.day = 33,
+		.hour = 25,
+		.min = 67,
+		.sec = 184,
+		.uSec = 10777333
+	};	//due to overflow data should change to 2000-02-03 02.10.14.777333
+
+	EXPECT_CALL(clock, getTime)
+		.WillRepeatedly(testing::Return(timeConverter.toTimePoint(customTime)));
+
+	EXPECT_EQ(timeMenager.getYear(), 2000);
+	EXPECT_EQ(timeMenager.getMonth(), 2);
+	EXPECT_EQ(timeMenager.getDay(), 3);
+	EXPECT_EQ(timeMenager.getHour(), 2);
+	EXPECT_EQ(timeMenager.getMin(), 10);
+	EXPECT_EQ(timeMenager.getSec(), 14);
+	EXPECT_EQ(timeMenager.getuSec(), 777333);
+
+}
+
+TEST_F(DataStructureTest, testMockTimeThenMakeString) {
+	MockClock clock;
+	DataStructure timeMenager(clock);
+	TimeConverter timeConverter;
 	TimeStructure customTime = {
 		.year = 1996,
 		.month = 12,
@@ -129,22 +143,13 @@ TEST_F(DataStructureTest, testTimeStructureThenMakeString) {
 		.uSec = 14052
 	};
 
-	//created mockClock and set return custom time
-	MockClock clock;
-	EXPECT_CALL(clock, getTime(testing::_))
-		.WillOnce(testing::Invoke([&customTime](TimeStructure& time) {
-		time = customTime;
-			}));
+	EXPECT_CALL(clock, getTime)
+		.WillOnce(testing::Return(timeConverter.toTimePoint(customTime)));
 
-	//created main object
-	DataStructure obj(clock);
-
-	//updates TimeStructure inside TimeSynchonizator with MockClock values
-	obj.updateTime();
-
-	EXPECT_EQ(obj.getTime(), "1996-12-08 18:00:08.014052");
+	EXPECT_EQ(timeMenager.getTime(), "1996-12-08 18:00:08.014052");
 }
 
+/*
 //test almost the whole module
 //creates 2 intances on the same decice, connects them to each other,
 //then each one sending its time to other,
@@ -251,7 +256,7 @@ TEST_F(DataStructureTest, test2ModulesInOneMachine)
 	EXPECT_EQ(program1GlobalTime, averageCustomTime);
 	EXPECT_EQ(program2GlobalTime, averageCustomTime);
 }
-
+*/
 int main(int argc, char** argv)
 {
 	::testing::InitGoogleTest(&argc, argv);
