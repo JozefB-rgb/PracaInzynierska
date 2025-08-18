@@ -4,13 +4,13 @@
 #include <iostream>
 #include <string>
 
-#include "DataStructure.h"
+#include "TimeMenager.h"
 
-class DataStructureTest :public ::testing::Test
+class TimeMenagerTest :public ::testing::Test
 {
 };
 
-TEST_F(DataStructureTest, testMakingTimeString) {
+TEST_F(TimeMenagerTest, testMakingTimeString) {
 	TimeStructure customTime = {
 		.year = 2025,
 		.month = 4,
@@ -27,7 +27,7 @@ TEST_F(DataStructureTest, testMakingTimeString) {
 	EXPECT_EQ(timeString, "2025-04-05 20:21:29.000098");
 }
 
-TEST_F(DataStructureTest, testStringToTimeStructure) {
+TEST_F(TimeMenagerTest, testStringToTimeStructure) {
 	std::string timeString = "1997-11-07 04:12:09.005310";
 	TimeStructure time = {
 		.year = 1997,
@@ -45,7 +45,7 @@ TEST_F(DataStructureTest, testStringToTimeStructure) {
 	EXPECT_EQ(time, timeConverted);
 }
 
-TEST_F(DataStructureTest, testTimeStructureToStringToTimeStructure) {
+TEST_F(TimeMenagerTest, testTimeStructureToStringToTimeStructure) {
 	TimeStructure time = {
 		.year = 925,
 		.month = 8,
@@ -63,7 +63,7 @@ TEST_F(DataStructureTest, testTimeStructureToStringToTimeStructure) {
 	EXPECT_EQ(time, timeAfterConvertion);
 }
 
-TEST_F(DataStructureTest, testTimeStringToTimeStructureToTimeString) {
+TEST_F(TimeMenagerTest, testTimeStringToTimeStructureToTimeString) {
 	//creates some custom time data
 	std::string timeString = "1020-02-13 10:15:54.009041";
 
@@ -75,7 +75,7 @@ TEST_F(DataStructureTest, testTimeStringToTimeStructureToTimeString) {
 	EXPECT_EQ(timeString, timeStringAfterConvertion);
 }
 
-TEST_F(DataStructureTest, testConvertionFromTimeStructureToTimePointAndBack)
+TEST_F(TimeMenagerTest, testConvertionFromTimeStructureToTimePointAndBack)
 {
 	std::chrono::system_clock::time_point timePoint;
 	TimeConverter timeConverter;
@@ -102,10 +102,10 @@ TEST_F(DataStructureTest, testConvertionFromTimeStructureToTimePointAndBack)
 	EXPECT_EQ(timeAfterConversion.uSec, 222);
 }
 
-TEST_F(DataStructureTest, testIfMockInvoceCorrectTime) {
+TEST_F(TimeMenagerTest, testIfMockInvoceCorrectTime) {
 	MockClock clock;
 	TimeConverter timeConverter;
-	DataStructure timeMenager(clock);
+	TimeMenager timeMenager(clock);
 	TimeStructure customTime = {
 		.year = 1999,
 		.month = 13,
@@ -129,9 +129,9 @@ TEST_F(DataStructureTest, testIfMockInvoceCorrectTime) {
 
 }
 
-TEST_F(DataStructureTest, testMockTimeThenMakeString) {
+TEST_F(TimeMenagerTest, testMockTimeThenMakeString) {
 	MockClock clock;
-	DataStructure timeMenager(clock);
+	TimeMenager timeMenager(clock);
 	TimeConverter timeConverter;
 	TimeStructure customTime = {
 		.year = 1996,
@@ -154,7 +154,7 @@ TEST_F(DataStructureTest, testMockTimeThenMakeString) {
 //creates 2 intances on the same decice, connects them to each other,
 //then each one sending its time to other,
 //the result time should be in this case arithmetic average form 2 time values
-TEST_F(DataStructureTest, test2ModulesInOneMachine)
+TEST_F(TimeMenagerTest, test2ModulesInOneMachine)
 {
 	//set up custom MockClocks time values for programs
 	TimeStructure customTime1 = {
@@ -195,8 +195,8 @@ TEST_F(DataStructureTest, test2ModulesInOneMachine)
 	std::string pathToAdressesFileProgram2 = "";
 
 	//created 2 main programs with MockClocks and paths to files with adress to second program socket
-	DataStructure program1(clock1, pathToAdressesFileProgram1);
-	DataStructure program2(clock2, pathToAdressesFileProgram2);
+	TimeMenager program1(clock1, pathToAdressesFileProgram1);
+	TimeMenager program2(clock2, pathToAdressesFileProgram2);
 
 	//wait till the servers sets up 
 	int maxSetUptimeOut = 10;	//ms

@@ -1,5 +1,5 @@
 #include <iostream>
-#include "DataStructure.h"
+#include "TimeMenager.h"
 
 int main()
 {

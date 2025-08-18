@@ -1,6 +1,6 @@
-#ifndef DATA_STRUCTURE_H
+#ifndef TIME_MENAGER_H
 
-#define DATA_STRUCTURE_H
+#define TIME_MENAGER_H
 
 #include <gmock/gmock.h>
 #include <iomanip>
@@ -58,7 +58,7 @@ public:
 	MOCK_METHOD(std::chrono::system_clock::time_point, getTime, (), (override));
 };
 
-class DataStructure
+class TimeMenager
 {
 	IClock& clock_;
 	TimeStructure time_;
@@ -66,7 +66,7 @@ class DataStructure
 
 	void updateTime();
 public:
-	DataStructure(IClock& clockSource) : clock_(clockSource) { ; }
+	TimeMenager(IClock& clockSource) : clock_(clockSource) { ; }
 	int getYear();
 	int getMonth();
 	int getDay();
@@ -83,7 +83,7 @@ inline void PrintTo(TimeStructure& time, std::ostream* os);
 
 
 
-class DataStructure {
+class TimeMenager {
 	bool severRunning_ = false;
 	bool connectedToAll_ = false;
 	bool timeSynchronized_ = false;
@@ -94,8 +94,8 @@ class DataStructure {
 	std::string pathToAdressesFile_;
 
 public:
-	DataStructure(IClock& timeSource);
-	DataStructure(IClock& timeSource, std::string pathToAdressesFile);
+	TimeMenager(IClock& timeSource);
+	TimeMenager(IClock& timeSource, std::string pathToAdressesFile);
 
 	bool settingUp();
 	bool waitingForConnection();
@@ -117,5 +117,5 @@ public:
 };
 */
 
-#endif //DATA_STRUCTURE_H
+#endif //TIME_MENAGER_H
 

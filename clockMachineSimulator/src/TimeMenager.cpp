@@ -1,4 +1,4 @@
-#include "DataStructure.h"
+#include "TimeMenager.h"
 
 #include <iomanip>
 #include <iostream>
@@ -88,53 +88,53 @@ std::chrono::system_clock::time_point TimeConverter::toTimePoint(const TimeStruc
 	return result;
 };
 
-//class DataStructure
-void DataStructure::updateTime()
+//class TimeMenager
+void TimeMenager::updateTime()
 {
 	std::chrono::system_clock::time_point timePoint = clock_.getTime();
 	time_ = timeConverter_.toTimeStructure(timePoint);
 }
-int DataStructure::getYear()
+int TimeMenager::getYear()
 {
 	updateTime();
 	return time_.year;
 };
-int DataStructure::getMonth()
+int TimeMenager::getMonth()
 {
 	updateTime();
 	return time_.month;
 };
-int DataStructure::getDay()
+int TimeMenager::getDay()
 {
 	updateTime();
 	return time_.day;
 };
-int DataStructure::getHour()
+int TimeMenager::getHour()
 {
 	updateTime(); 
 	return time_.hour;
 };
-int DataStructure::getMin()
+int TimeMenager::getMin()
 { 
 	updateTime(); 
 	return time_.min;
 };
-int DataStructure::getSec()
+int TimeMenager::getSec()
 { 
 	updateTime(); 
 	return time_.sec;
 };
-int DataStructure::getuSec() 
+int TimeMenager::getuSec() 
 {
 	updateTime();
 	return time_.uSec;
 };
-std::string DataStructure::getTime()
+std::string TimeMenager::getTime()
 {
 	updateTime();
 	return timeConverter_.timeToString(time_);
 }
-//std::string DataStructure::getTime() { return converter_.timeToString(time_); }
+//std::string TimeMenager::getTime() { return converter_.timeToString(time_); }
 /*
 //for printhing to console during project Testing
 inline void PrintTo(TimeStructure& time, std::ostream* os) {
@@ -145,29 +145,29 @@ inline void PrintTo(TimeStructure& time, std::ostream* os) {
 
 
 
-//class DataStructure
-DataStructure::DataStructure(IClock& timeSource) : timeSource_(timeSource) {}
-DataStructure::DataStructure(IClock& timeSource, std::string pathToAdressesFile) : timeSource_(timeSource), pathToAdressesFile_(pathToAdressesFile) {}
+//class TimeMenager
+TimeMenager::TimeMenager(IClock& timeSource) : timeSource_(timeSource) {}
+TimeMenager::TimeMenager(IClock& timeSource, std::string pathToAdressesFile) : timeSource_(timeSource), pathToAdressesFile_(pathToAdressesFile) {}
 
-bool DataStructure::settingUp() {
+bool TimeMenager::settingUp() {
 	if (severRunning_) return true;
 	else return false;
 }
-bool DataStructure::waitingForConnection() {
+bool TimeMenager::waitingForConnection() {
 	if (connectedToAll_) return false;
 	else return true;
 }
-bool DataStructure::isSynchronized() { return timeSynchronized_; };
+bool TimeMenager::isSynchronized() { return timeSynchronized_; };
 
-void DataStructure::updateTime() { timeSource_.getTime(time_); };
-void DataStructure::synchronizeTime() { ; };
+void TimeMenager::updateTime() { timeSource_.getTime(time_); };
+void TimeMenager::synchronizeTime() { ; };
 
-int DataStructure::getYear() { return time_.year; };
-int DataStructure::getMonth() { return time_.month; };
-int DataStructure::getDay() { return time_.day; };
-int DataStructure::getHour() { return time_.hour; };
-int DataStructure::getMin() { return time_.min; };
-int DataStructure::getSec() { return time_.sec; };
-int DataStructure::getuSec() { return time_.uSec; };
-//~class DataStructure
+int TimeMenager::getYear() { return time_.year; };
+int TimeMenager::getMonth() { return time_.month; };
+int TimeMenager::getDay() { return time_.day; };
+int TimeMenager::getHour() { return time_.hour; };
+int TimeMenager::getMin() { return time_.min; };
+int TimeMenager::getSec() { return time_.sec; };
+int TimeMenager::getuSec() { return time_.uSec; };
+//~class TimeMenager
 */
