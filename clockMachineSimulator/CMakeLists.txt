@@ -22,8 +22,12 @@ target_link_libraries(testIPStructures GTest::GTest GTest::Main)
 add_executable(testAdressFromFileLoader "tests/testAdressFormFileLoader.cpp" "src/AdressFormFileLoader.h" "src/AdressFormFileLoader.cpp" "src/IPStructures.h" "src/IPStructures.cpp")
 target_link_libraries(testAdressFromFileLoader GTest::GTest GTest::Main gmock gmock_main)
 
+add_executable(testSocketMenager "tests/testSocketMenager.cpp" "src/SocketMenager.h" "src/SocketMenager.cpp")
+target_link_libraries(testSocketMenager GTest::GTest GTest::Main gmock gmock_main)
+
 add_test(NAME TimeMenager COMMAND testTimeMenager)
 add_test(NAME IPStructures COMMAND testIPStructures)
 add_test(NAME AdressFromFileLoader COMMAND testAdressFromFileLoader)
+add_test(NAME SocketMenager COMMAND testSocketMenager)
 
 

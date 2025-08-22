@@ -1,0 +1,5 @@
+#ifdef SOCKET_MENAGER_H
+#define SOCKET_MENAGER_H
+
+
+#endif // SOCKET_MENAGER_H
