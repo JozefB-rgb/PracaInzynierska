@@ -16,9 +16,9 @@ public:
 class MockSocketClient;
 class MockSocketServer :public ISocketServer
 {
-	std::shared_ptr<MockSocketClient> mockClient_;
+	MockSocketClient* mockClient_;
 public:
-	void connectTo(const std::shared_ptr<MockSocketClient>& mockClient);
+	void connectTo(MockSocketClient* mockClient);
 	void write(std::string message);
 	void update();
 	MOCK_METHOD(std::string, read, (), (override));
@@ -33,7 +33,7 @@ public:
 	virtual ~ISocketClient() = default;
 };
 
-class MockSocketClient :public ISocketClient, public std::enable_shared_from_this<MockSocketClient>
+class MockSocketClient :public ISocketClient
 {
 	MockSocketServer& mockServer_;
 public:
