@@ -1,53 +1,51 @@
 #ifndef SOCKET_MENAGER_H
 #define SOCKET_MENAGER_H
 
+#define CONNECTED true
+#define DISCONNECTED false
+
 #include <string>
 #include <memory>
 #include <functional>
 #include <thread>
 #include <chrono>
 #include <gmock/gmock.h>
+#include <gtest/gtest.h>
 
-class ISocketServer
+class ISocket
 {
 public:
 	virtual std::string read() = 0;
 	virtual void write(std::string) = 0;
-	virtual ~ISocketServer() = default;
+	virtual bool getStatus() = 0;
+	virtual ~ISocket() = default;
 };
 
-class MockSocketClient;
-class MockSocketServer :public ISocketServer
+class SocketBase :public ISocket
 {
-	MockSocketClient* mockClient_;
+protected:
+	bool socketConnected_ = false;
+};
+
+class MockSocket :public SocketBase
+{
+	MockSocket* remoteMockSocket_ = NULL;
+	std::string whoAmI_ = "whoAmI";
+	std::string IAmSocket_ = "IAmSocket";
+	std::string closeConnection_ = "closeConnection_";
+
 public:
-	void connectTo(MockSocketClient* mockClient);
 	void write(std::string message);
 	void update();
+	void acceptConnection(MockSocket *remoteSocket);
+	void disconnect();
+	bool getStatus();
+	int connectTo(MockSocket* mockSocket);
 	MOCK_METHOD(std::string, read, (), (override));
 	MOCK_METHOD(std::string, getTime, (), ());
 };
 
-class ISocketClient
-{
-public:
-	virtual std::string  read() = 0;
-	virtual void write(std::string) = 0;
-	virtual void connectToServer() = 0;
-	virtual ~ISocketClient() = default;
-};
-
-class MockSocketClient :public ISocketClient
-{
-	MockSocketServer& mockServer_;
-public:
-	MockSocketClient(MockSocketServer& mockServer) : mockServer_(mockServer) { ; }
-	void connectToServer();
-	void write(std::string message);
-	void writeNoUpdate(std::string message);
-	MOCK_METHOD(std::string, read, (), (override));
-};
-
+/*
 class SocketMenager
 {
 	ISocketServer& socketServer_;
@@ -65,5 +63,6 @@ public:
 	void connectClients();
 	void updateTimes();
 };
+*/
 
 #endif // SOCKET_MENAGER_H

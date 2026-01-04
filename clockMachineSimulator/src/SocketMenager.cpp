@@ -1,25 +1,63 @@
 #include "SocketMenager.h"
 
-//MockSocketServer
-void MockSocketServer::connectTo(MockSocketClient* mockClient)
+//MockSocket
+int MockSocket::connectTo(MockSocket* remoteMockSocket)
 {
-	mockClient_ = mockClient;
+	remoteMockSocket_ = remoteMockSocket;
+	remoteMockSocket_->acceptConnection(this);
+	this->write(whoAmI_);
+	remoteMockSocket_->update();
+	if (this->read() == IAmSocket_)
+	{
+		socketConnected_ = true;
+		return (0);
+	}
+	else
+	{
+		socketConnected_ = false;
+		remoteMockSocket_ = NULL;
+		return (1);
+	}
 }
-void MockSocketServer::write(std::string message)
+void MockSocket::write(std::string message)
 {
-	EXPECT_CALL(*mockClient_, read)
+	EXPECT_CALL(*remoteMockSocket_, read)
 		.WillOnce(::testing::Return(message));
 }
-void MockSocketServer::update()
+
+void MockSocket::update()
 {
-	if (read() == "TIME?")
+	std::string message = this->read();
+	if (message == whoAmI_)
 	{
-		EXPECT_CALL(*mockClient_, read)
-			.WillOnce(::testing::Return(getTime()));
+		this->write(IAmSocket_);
+	}
+	else if (message == closeConnection_)
+	{
+		remoteMockSocket_ = NULL;
+		socketConnected_ = false;
 	}
 }
 
+void MockSocket::disconnect()
+{
+	this->write(closeConnection_);
+	remoteMockSocket_->update();
+	remoteMockSocket_ = NULL;
+	socketConnected_ = false;
+}
 
+void MockSocket::acceptConnection(MockSocket *remoteSocket)
+{
+	socketConnected_ = true;
+	remoteMockSocket_ = remoteSocket;
+}
+
+bool MockSocket::getStatus()
+{
+	return (socketConnected_);
+}
+/*
 //MockSocketClient
 void MockSocketClient::connectToServer()
 {
@@ -36,7 +74,8 @@ void MockSocketClient::writeNoUpdate(std::string message)
 	EXPECT_CALL(mockServer_, read)
 		.WillOnce(::testing::Return(message));
 }
-
+*/
+/*
 //SocketMenager
 void SocketMenager::updateTime_(ISocketClient& socketClient, std::string& time, int timeOut_ms, int& failFlag)
 {
@@ -56,10 +95,6 @@ void SocketMenager::updateTime_(ISocketClient& socketClient, std::string& time, 
 			break;
 		}
 	}
-	if (failFlag)
-		std::cout << "Time out occured\n";
-	else
-		std::cout << time << "\n";
 }
 void SocketMenager::addClient(ISocketClient& socketClient)
 {
@@ -76,6 +111,7 @@ void SocketMenager::connectClients()
 void SocketMenager::updateTimes()
 {
 	timeUpdatedFlag = false;
+	bool timeUpdateFail = false;
 
 	for (int i = 0; i < socketClients_.size(); i++)
 	{
@@ -93,5 +129,14 @@ void SocketMenager::updateTimes()
 			t.join();
 		}
 	}
+	for (int i = 0; i < transmitionFailedFlag_.size(); i++)
+	{
+		if (transmitionFailedFlag_.at(i))
+		{
+			std::cout << "Updateing time form socketClient" << i << "\n";
+			timeUpdateFail = true;
+		}
+	}
+	if (!timeUpdateFail) timeUpdatedFlag = true;
 
-}
+}*/
