@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <string>
 #include <memory>
+#include <thread>
 
 #include "SocketMenager.h"
 #include "TimeMenager.h"
@@ -12,48 +13,93 @@ class SocketMenagerTest :public ::testing::Test
 
 TEST_F(SocketMenagerTest, testEstablishedConnectionBetweenSockets)
 {
-	MockSocket socket_1;
-	MockSocket socket_2;
-
-	EXPECT_EQ(socket_1.getStatus(), DISCONNECTED);
-	EXPECT_EQ(socket_2.getStatus(), DISCONNECTED);
-	EXPECT_EQ(socket_2.connectTo(&socket_1), 0);
-	EXPECT_EQ(socket_1.getStatus(), CONNECTED);
-	EXPECT_EQ(socket_2.getStatus(), CONNECTED);
+	FakeSocket socket_1;
+	FakeSocket socket_2;
+	EXPECT_EQ(socket_1.getStatus(), ISocket::SocketStatus::Disconnected);
+	EXPECT_EQ(socket_2.getStatus(), ISocket::SocketStatus::Disconnected);
+	EXPECT_EQ(socket_2.connectTo(&socket_1), FakeSocket::SocketStatus::Connected);
+	EXPECT_EQ(socket_1.getStatus(), FakeSocket::SocketStatus::Connected);
+	EXPECT_EQ(socket_2.getStatus(), FakeSocket::SocketStatus::Connected);
 }
 
 
 TEST_F(SocketMenagerTest, testClosingConnectionBetweenSockets)
 {
-	MockSocket socket_1;
-	MockSocket socket_2;
+	FakeSocket socket_1;
+	FakeSocket socket_2;
 
-	EXPECT_EQ(socket_1.connectTo(&socket_2), 0);
-	EXPECT_EQ(socket_1.getStatus(), CONNECTED);
-	EXPECT_EQ(socket_2.getStatus(), CONNECTED);
+	EXPECT_EQ(socket_1.connectTo(&socket_2), FakeSocket::SocketStatus::Connected);
+	EXPECT_EQ(socket_1.getStatus(), FakeSocket::SocketStatus::Connected);
+	EXPECT_EQ(socket_2.getStatus(), FakeSocket::SocketStatus::Connected);
 	socket_2.disconnect();
-	EXPECT_EQ(socket_1.getStatus(), DISCONNECTED);
-	EXPECT_EQ(socket_2.getStatus(), DISCONNECTED);
+	EXPECT_EQ(socket_1.getStatus(), FakeSocket::SocketStatus::Disconnected);
+	EXPECT_EQ(socket_2.getStatus(), FakeSocket::SocketStatus::Disconnected);
 }
 
 TEST_F(SocketMenagerTest, testCommunicationBetweenSockets)
 {
-	MockSocket socket_1;
-	MockSocket socket_2;
+	FakeSocket socket_1;
+	FakeSocket socket_2;
 	std::string message_to_1 = "2025-02-01 10:59:48.000001";
 	std::string message_to_2 = "2025-02-01 10:59:48.000002";
 
-	EXPECT_EQ(socket_1.connectTo(&socket_2), 0);
+	EXPECT_EQ(socket_1.connectTo(&socket_2), FakeSocket::SocketStatus::Connected);
 	socket_1.write(message_to_2);
 	socket_2.write(message_to_1);
 	EXPECT_EQ(socket_1.read(), message_to_1);
 	EXPECT_EQ(socket_2.read(), message_to_2);
 }
+
+TEST_F(SocketMenagerTest, testMultiThreatingFakeSockets)
+{
+	FakeSocket socket_1;
+	FakeSocket socket_2;
+	std::string message_to_1 = "IAmSocket_2";
+	std::string message_to_2 = "IAmSocket_1";
+
+	std::thread t1([&socket_1, &socket_2, message_to_1, message_to_2] {
+		std::string message_from_2;
+
+		EXPECT_THAT(socket_1.connectTo(&socket_2), ::testing::AnyOf(
+			FakeSocket::SocketStatus::Connected,
+			FakeSocket::SocketStatus::AlreadyConnected)
+		);
+		socket_1.write(message_to_2);
+		for (int i = 0; i < 10; i++)
+		{
+			message_from_2 = socket_1.read();
+			if (message_from_2 != "") break;
+			std::this_thread::sleep_for(std::chrono::milliseconds(10));
+		}
+		EXPECT_EQ(message_from_2, message_to_1);
+	});
+
+	std::thread t2([&socket_1, &socket_2, message_to_1, message_to_2] {
+		std::string message_from_1;
+
+		EXPECT_THAT(socket_2.connectTo(&socket_1), ::testing::AnyOf(
+				FakeSocket::SocketStatus::Connected,
+				FakeSocket::SocketStatus::AlreadyConnected)
+		);
+		socket_2.write(message_to_1);
+		for (int i = 0; i < 10; i++)
+		{
+			message_from_1 = socket_2.read();
+			if (message_from_1 != "") break;
+			std::this_thread::sleep_for(std::chrono::milliseconds(10));
+		}
+		EXPECT_EQ(message_from_1, message_to_2);
+	});
+
+	t1.join();
+	t2.join();
+}
+
 /*
 TEST_F(SocketMenagerTest, testMockClientAndServerWritingToEachOther)
 {
-	MockSocketServer socketServer;
-	MockSocketClient socketClient(socketServer);
+	FakeSocketServer socketServer;
+	FakeSocketClient socketClient(socketServer);
 	socketClient.connectToServer();
 	std::string messageToServer = "TO_SERVER";
 	std::string messageToClient = "TO_CLIENT";
@@ -65,10 +111,10 @@ TEST_F(SocketMenagerTest, testMockClientAndServerWritingToEachOther)
 	EXPECT_EQ(socketServer.read(), messageToServer);
 }
 
-TEST_F(SocketMenagerTest, testMockSocketClientAskingMockSocketServerForTime)
+TEST_F(SocketMenagerTest, testFakeSocketClientAskingFakeSocketServerForTime)
 {
-	MockSocketServer socketServer;
-	MockSocketClient socketClient(socketServer);
+	FakeSocketServer socketServer;
+	FakeSocketClient socketClient(socketServer);
 	socketClient.connectToServer();
 	std::string messageToServer = "TIME?";
 	std::string time = "2000-01-02 03:04:05.678901";
@@ -86,15 +132,15 @@ TEST_F(SocketMenagerTest, testMockSocketClientAskingMockSocketServerForTime)
 TEST_F(SocketMenagerTest, testSocketMenagerMultiThreeatingReadingTimeFromServers)
 {
 	
-	MockSocketServer remoteServer0;
-	MockSocketServer remoteServer1;
-	MockSocketClient socketClient0(remoteServer0);
-	MockSocketClient socketClient1(remoteServer1);
+	FakeSocketServer remoteServer0;
+	FakeSocketServer remoteServer1;
+	FakeSocketClient socketClient0(remoteServer0);
+	FakeSocketClient socketClient1(remoteServer1);
 	std::string timeServer0 = "2000-01-01 00:00:10.000000";
 	std::string timeServer1 = "2001-01-01 00:00:50.000000";
 	std::vector<std::string> times(2);
 
-	MockSocketServer socketServer;
+	FakeSocketServer socketServer;
 	SocketMenager socketMenager(socketServer, times);
 	socketMenager.addClient(socketClient0);
 	socketMenager.addClient(socketClient1);

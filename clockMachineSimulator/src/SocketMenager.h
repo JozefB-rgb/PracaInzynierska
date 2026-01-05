@@ -1,9 +1,6 @@
 #ifndef SOCKET_MENAGER_H
 #define SOCKET_MENAGER_H
 
-#define CONNECTED true
-#define DISCONNECTED false
-
 #include <string>
 #include <memory>
 #include <functional>
@@ -11,38 +8,43 @@
 #include <chrono>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include <queue>
 
 class ISocket
 {
 public:
+	enum class SocketStatus
+	{
+		Connected,
+		Disconnected,
+		AlreadyConnected
+	};
+public:
 	virtual std::string read() = 0;
 	virtual void write(std::string) = 0;
-	virtual bool getStatus() = 0;
+	virtual SocketStatus getStatus() = 0;
 	virtual ~ISocket() = default;
 };
 
-class SocketBase :public ISocket
+class FakeSocket :public ISocket
 {
-protected:
-	bool socketConnected_ = false;
-};
-
-class MockSocket :public SocketBase
-{
-	MockSocket* remoteMockSocket_ = NULL;
+private:
+	FakeSocket* remoteFakeSocket_ = NULL;
 	std::string whoAmI_ = "whoAmI";
 	std::string IAmSocket_ = "IAmSocket";
 	std::string closeConnection_ = "closeConnection_";
+	std::mutex	socketMutex_;
+	std::queue<std::string> queue_;
+	SocketStatus socketStatus_ = SocketStatus::Disconnected;
+	void update();
+	void acceptConnection(FakeSocket* remoteSocket);
 
 public:
 	void write(std::string message);
-	void update();
-	void acceptConnection(MockSocket *remoteSocket);
 	void disconnect();
-	bool getStatus();
-	int connectTo(MockSocket* mockSocket);
-	MOCK_METHOD(std::string, read, (), (override));
-	MOCK_METHOD(std::string, getTime, (), ());
+	SocketStatus getStatus();
+	SocketStatus connectTo(FakeSocket* fakeSocket);
+	std::string read();
 };
 
 /*

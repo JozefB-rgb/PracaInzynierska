@@ -1,31 +1,59 @@
 #include "SocketMenager.h"
 
-//MockSocket
-int MockSocket::connectTo(MockSocket* remoteMockSocket)
+//FakeSocket
+ISocket::SocketStatus FakeSocket::connectTo(FakeSocket* remoteFakeSocket)
 {
-	remoteMockSocket_ = remoteMockSocket;
-	remoteMockSocket_->acceptConnection(this);
-	this->write(whoAmI_);
-	remoteMockSocket_->update();
-	if (this->read() == IAmSocket_)
+	if (!remoteFakeSocket) {
+		this->socketStatus_ = SocketStatus::Disconnected;
+		return (socketStatus_);
+	}
+	if (this < remoteFakeSocket)
 	{
-		socketConnected_ = true;
-		return (0);
+		std::lock_guard<std::mutex> guard(this->socketMutex_);
+		if (remoteFakeSocket_) return (SocketStatus::AlreadyConnected);
+		remoteFakeSocket_ = remoteFakeSocket;
+		std::lock_guard<std::mutex> guard2(remoteFakeSocket_->socketMutex_);
+		remoteFakeSocket_->acceptConnection(this);
 	}
 	else
 	{
-		socketConnected_ = false;
-		remoteMockSocket_ = NULL;
-		return (1);
+		if (remoteFakeSocket_) return (SocketStatus::AlreadyConnected);
+		remoteFakeSocket_ = remoteFakeSocket;
+		std::lock_guard<std::mutex> guard(remoteFakeSocket_->socketMutex_);
+		std::lock_guard<std::mutex> guard2(this->socketMutex_);
+		remoteFakeSocket_->acceptConnection(this);
+	}
+	this->write(whoAmI_);
+	remoteFakeSocket_->update();
+	if (this->read() == IAmSocket_)
+	{
+		socketStatus_ = SocketStatus::Connected;
+		return (socketStatus_);
+	}
+	else
+	{
+		remoteFakeSocket_ = NULL;
+		socketStatus_ = SocketStatus::Disconnected;
+		return (socketStatus_);
 	}
 }
-void MockSocket::write(std::string message)
+void FakeSocket::write(std::string message)
 {
-	EXPECT_CALL(*remoteMockSocket_, read)
-		.WillOnce(::testing::Return(message));
+	if (this < remoteFakeSocket_)
+	{
+		std::lock_guard<std::mutex> guard(this->socketMutex_);
+		std::lock_guard<std::mutex> guard2(remoteFakeSocket_->socketMutex_);
+		remoteFakeSocket_->queue_.push(std::move(message));
+	}
+	else
+	{
+		std::lock_guard<std::mutex> guard(remoteFakeSocket_->socketMutex_);
+		std::lock_guard<std::mutex> guard2(this->socketMutex_);
+		remoteFakeSocket_->queue_.push(std::move(message));
+	}
 }
 
-void MockSocket::update()
+void FakeSocket::update()
 {
 	std::string message = this->read();
 	if (message == whoAmI_)
@@ -34,42 +62,51 @@ void MockSocket::update()
 	}
 	else if (message == closeConnection_)
 	{
-		remoteMockSocket_ = NULL;
-		socketConnected_ = false;
+		remoteFakeSocket_ = NULL;
+		socketStatus_ = SocketStatus::Disconnected;
 	}
 }
 
-void MockSocket::disconnect()
+void FakeSocket::disconnect()
 {
 	this->write(closeConnection_);
-	remoteMockSocket_->update();
-	remoteMockSocket_ = NULL;
-	socketConnected_ = false;
+	remoteFakeSocket_->update();
+	remoteFakeSocket_ = NULL;
+	socketStatus_ = SocketStatus::Disconnected;
 }
 
-void MockSocket::acceptConnection(MockSocket *remoteSocket)
+void FakeSocket::acceptConnection(FakeSocket *remoteSocket)
 {
-	socketConnected_ = true;
-	remoteMockSocket_ = remoteSocket;
+	socketStatus_ = SocketStatus::Connected;
+	remoteFakeSocket_ = remoteSocket;
 }
 
-bool MockSocket::getStatus()
+ISocket::SocketStatus FakeSocket::getStatus()
 {
-	return (socketConnected_);
+	return (socketStatus_);
+}
+
+std::string FakeSocket::read()
+{
+	std::lock_guard<std::mutex> guard(socketMutex_);
+	if (queue_.empty()) return ("");
+	auto result = std::move(queue_.front());
+	queue_.pop();
+	return (result);
 }
 /*
-//MockSocketClient
-void MockSocketClient::connectToServer()
+//FakeSocketClient
+void FakeSocketClient::connectToServer()
 {
 	mockServer_.connectTo(this);
 }
-void MockSocketClient::write(std::string message)
+void FakeSocketClient::write(std::string message)
 {
 	EXPECT_CALL(mockServer_, read)
 		.WillOnce(::testing::Return(message));
 	mockServer_.update();
 }
-void MockSocketClient::writeNoUpdate(std::string message)
+void FakeSocketClient::writeNoUpdate(std::string message)
 {
 	EXPECT_CALL(mockServer_, read)
 		.WillOnce(::testing::Return(message));
